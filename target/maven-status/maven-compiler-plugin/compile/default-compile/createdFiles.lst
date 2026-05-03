@@ -48,6 +48,7 @@ com/mycompany/paud/DataKelasPanel.class
 com/mycompany/paud/PasswordUtil.class
 com/mycompany/paud/DataSiswaPanel$2.class
 com/mycompany/paud/DataPenggunaPanel$5.class
+com/mycompany/paud/AbsensiPanel$6.class
 com/mycompany/paud/Theme.class
 com/mycompany/paud/LoginFrame$5.class
 com/mycompany/paud/DataKelasPanel$2.class

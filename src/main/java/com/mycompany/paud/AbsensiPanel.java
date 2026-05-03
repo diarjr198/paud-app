@@ -263,13 +263,30 @@ public class AbsensiPanel extends JPanel {
     }
 
     private JButton batchBtn(String text, Color bg, String status) {
-        JButton b = new JButton(text);
+        JButton b = new JButton(text) {
+            @Override protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                Color c = !isEnabled() ? new Color(225, 225, 225)
+                        : getModel().isPressed() ? bg.darker() : bg;
+                g2.setColor(c);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.dispose();
+                setForeground(isEnabled() ? Color.WHITE : new Color(105, 105, 105));
+                super.paintComponent(g);
+            }
+        };
+        b.setUI(new BasicButtonUI());
         b.setFont(new Font("SansSerif", Font.BOLD, 11));
         b.setForeground(Color.WHITE);
-        b.setBackground(bg);
-        b.setBorder(new EmptyBorder(5, 10, 5, 10));
+        b.setContentAreaFilled(false);
+        b.setBorderPainted(false);
+        b.setOpaque(false);
+        b.setBorder(new EmptyBorder(0, 0, 0, 0));
         b.setFocusPainted(false);
-        b.setOpaque(true);
+        b.setMargin(new Insets(0, 10, 0, 10));
+        b.setPreferredSize(new Dimension(52, 24));
+        b.setMinimumSize(new Dimension(52, 24));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.addActionListener(e -> applyBatchStatus(status));
         return b;

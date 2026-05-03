@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.time.*;
 import java.time.format.*;
 import java.util.ArrayList;
@@ -36,7 +37,6 @@ public class MainFrame extends JFrame {
     private JComboBox<String> cbAngkatanSidebar;
 
     private static final String[] NAV_NAMES = {"Dashboard", "Data Siswa", "Data Kelas", "Data Guru", "Data Pengguna", "Absensi Hari Ini", "Laporan Bulan", "Pengaturan"};
-    private static final String[] NAV_ICONS = {"🏠", "👥", "🏷️", "👩", "👤", "📅", "📊", "⚙"};
     private static final String[] CARD_KEYS = {"DASHBOARD", "DATASISWA", "DATAKELAS", "DATAGURU", "DATAPENGGUNA", "ABSENSI", "LAPORAN", "PENGATURAN"};
 
     public MainFrame() {
@@ -278,8 +278,9 @@ public class MainFrame extends JFrame {
     }
 
     private JLabel buildNavItem(int idx) {
-        JLabel lbl = new JLabel(NAV_ICONS[idx] + "  " + NAV_NAMES[idx]) {
+        JLabel lbl = new JLabel(NAV_NAMES[idx]) {
             @Override protected void paintComponent(Graphics g) {
+                boolean selected = getClientProperty("selected") != null && (boolean)getClientProperty("selected");
                 if (getClientProperty("selected") != null && (boolean)getClientProperty("selected")) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -290,6 +291,7 @@ public class MainFrame extends JFrame {
                 } else {
                     setForeground(Theme.TEXT_DARK);
                 }
+                setIcon(makeNavIcon(idx, selected ? Color.WHITE : Theme.TEXT_DARK));
                 super.paintComponent(g);
             }
         };
@@ -301,6 +303,7 @@ public class MainFrame extends JFrame {
         lbl.setMinimumSize(new Dimension(0, 42));
         lbl.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         lbl.setPreferredSize(new Dimension(214, 42));
+        lbl.setIconTextGap(10);
         lbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         int i = idx;
         lbl.addMouseListener(new MouseAdapter() {
@@ -312,6 +315,86 @@ public class MainFrame extends JFrame {
         });
         lbl.putClientProperty("selected", false);
         return lbl;
+    }
+
+    private Icon makeNavIcon(int idx, Color color) {
+        final int s = 16;
+        BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        boolean selectedWhite = Color.WHITE.equals(color);
+        Color c1 = selectedWhite ? Color.WHITE : new Color(52, 152, 219);
+        Color c2 = selectedWhite ? Color.WHITE : new Color(46, 204, 113);
+        Color c3 = selectedWhite ? Color.WHITE : new Color(243, 156, 18);
+        Color c4 = selectedWhite ? Color.WHITE : new Color(231, 76, 60);
+        Color c5 = selectedWhite ? Color.WHITE : new Color(155, 89, 182);
+        Color cDark = selectedWhite ? Color.WHITE : new Color(44, 62, 80);
+
+        switch (idx) {
+            case 0: // Dashboard (home)
+                g.setColor(c1);
+                g.fillPolygon(new int[]{2, 8, 14}, new int[]{8, 2, 8}, 3);
+                g.setColor(c2);
+                g.fillRect(4, 8, 8, 6);
+                break;
+            case 1: // Data Siswa (2 person)
+                g.setColor(c1);
+                g.fillOval(2, 2, 5, 5);
+                g.setColor(c5);
+                g.fillOval(9, 2, 5, 5);
+                g.setColor(c1);
+                g.fillRoundRect(1, 8, 6, 6, 3, 3);
+                g.setColor(c5);
+                g.fillRoundRect(9, 8, 6, 6, 3, 3);
+                break;
+            case 2: // Data Kelas (tag)
+                g.setColor(c3);
+                g.fillRoundRect(2, 5, 12, 7, 3, 3);
+                g.setColor(selectedWhite ? Color.WHITE : new Color(255, 255, 255, 170));
+                g.fillOval(4, 7, 2, 2);
+                break;
+            case 3: // Data Guru (person)
+                g.setColor(c3);
+                g.fillOval(5, 2, 6, 6);
+                g.setColor(c4);
+                g.fillRoundRect(4, 8, 8, 6, 4, 4);
+                break;
+            case 4: // Data Pengguna (single user)
+                g.setColor(cDark);
+                g.fillOval(5, 2, 6, 6);
+                g.setColor(c1);
+                g.drawRoundRect(4, 8, 8, 6, 3, 3);
+                break;
+            case 5: // Absensi (calendar)
+                g.setColor(cDark);
+                g.drawRect(2, 3, 12, 11);
+                g.setColor(c4);
+                g.fillRect(2, 5, 12, 2);
+                g.setColor(cDark);
+                g.fillRect(4, 1, 2, 4);
+                g.fillRect(10, 1, 2, 4);
+                break;
+            case 6: // Laporan (bar chart)
+                g.setColor(c2);
+                g.fillRect(2, 9, 2, 5);
+                g.setColor(c3);
+                g.fillRect(6, 6, 2, 8);
+                g.setColor(c1);
+                g.fillRect(10, 3, 2, 11);
+                break;
+            default: // Pengaturan (gear-ish)
+                g.setColor(cDark);
+                g.drawOval(4, 4, 8, 8);
+                g.fillOval(7, 7, 2, 2);
+                g.setColor(c1);
+                g.fillRect(7, 1, 2, 3);
+                g.fillRect(7, 12, 2, 3);
+                g.fillRect(1, 7, 3, 2);
+                g.fillRect(12, 7, 3, 2);
+                break;
+        }
+        g.dispose();
+        return new ImageIcon(img);
     }
 
     private void selectNav(int idx) {
