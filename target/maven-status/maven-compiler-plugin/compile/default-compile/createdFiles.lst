@@ -29,7 +29,6 @@ com/mycompany/paud/LaporanPanel$4.class
 com/mycompany/paud/DataGuruPanel$1.class
 com/mycompany/paud/LaporanPanel$DetailButtonRenderer.class
 com/mycompany/paud/LaporanPanel.class
-com/mycompany/paud/MainFrame$4.class
 com/mycompany/paud/DataGuruPanel$4.class
 com/mycompany/paud/LaporanPanel$1.class
 com/mycompany/paud/DataStore.class
@@ -45,12 +44,12 @@ com/mycompany/paud/LaporanPanel$7.class
 com/mycompany/paud/Kelas.class
 com/mycompany/paud/AbsensiPanel.class
 com/mycompany/paud/DataKelasPanel.class
+com/mycompany/paud/PengaturanPanel$1.class
 com/mycompany/paud/PasswordUtil.class
 com/mycompany/paud/DataSiswaPanel$2.class
 com/mycompany/paud/DataPenggunaPanel$5.class
 com/mycompany/paud/AbsensiPanel$6.class
 com/mycompany/paud/Theme.class
-com/mycompany/paud/LoginFrame$5.class
 com/mycompany/paud/DataKelasPanel$2.class
 com/mycompany/paud/AbsensiPanel$3.class
 com/mycompany/paud/PengaturanPanel.class

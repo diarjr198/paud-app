@@ -13,6 +13,9 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
 
 public class LoginFrame extends JFrame {
 
@@ -21,7 +24,7 @@ public class LoginFrame extends JFrame {
     private JLabel        lblError;
 
     public LoginFrame() {
-        setTitle("Login - Sistem Absensi PAUD Tunas Harapan");
+        setTitle("Login - Sistem Absensi PAUD " + DataStore.getInstance().getNamaSekolah());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(460, 560);
         setLocationRelativeTo(null);
@@ -50,18 +53,7 @@ public class LoginFrame extends JFrame {
         card.setPreferredSize(new Dimension(360, 460));
 
         // Logo
-        JLabel logo = new JLabel("🎒", SwingConstants.CENTER) {
-            @Override protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(33, 150, 243));
-                g2.fillOval(0, 0, getWidth(), getHeight());
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        logo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 32));
-        logo.setForeground(Color.WHITE);
+        JLabel logo = new JLabel(loadLogoIcon(70), SwingConstants.CENTER);
         logo.setAlignmentX(CENTER_ALIGNMENT);
         logo.setPreferredSize(new Dimension(70, 70));
         logo.setMaximumSize(new Dimension(70, 70));
@@ -76,7 +68,7 @@ public class LoginFrame extends JFrame {
         appSub.setForeground(Theme.TEXT_GRAY);
         appSub.setAlignmentX(CENTER_ALIGNMENT);
 
-        JLabel appName = new JLabel("TUNAS HARAPAN", SwingConstants.CENTER);
+        JLabel appName = new JLabel(DataStore.getInstance().getNamaSekolah(), SwingConstants.CENTER);
         appName.setFont(new Font("SansSerif", Font.BOLD, 18));
         appName.setForeground(Theme.TEXT_DARK);
         appName.setAlignmentX(CENTER_ALIGNMENT);
@@ -289,5 +281,55 @@ public class LoginFrame extends JFrame {
         or.setFont(Theme.FONT_SMALL); or.setForeground(Theme.TEXT_GRAY);
         p.add(l, BorderLayout.WEST); p.add(or, BorderLayout.CENTER); p.add(r, BorderLayout.EAST);
         return p;
+    }
+
+    private Icon loadLogoIcon(int size) {
+        try {
+            ImageIcon raw = null;
+            File f = resolveLogoFile();
+            if (f != null && f.exists()) {
+                raw = new ImageIcon(f.getAbsolutePath());
+            } else {
+                URL u = LoginFrame.class.getResource("/com/mycompany/paud/assets/images/logo.png");
+                if (u == null) u = LoginFrame.class.getResource("/assets/images/logo.png");
+                if (u != null) raw = new ImageIcon(u);
+            }
+            if (raw == null || raw.getIconWidth() <= 0) return fallbackLogoIcon(size);
+            Image img = raw.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH);
+            return new ImageIcon(img);
+        } catch (Exception ignored) {
+            return fallbackLogoIcon(size);
+        }
+    }
+
+    private File resolveLogoFile() {
+        String[] candidates = {
+            "assets/images/logo.png",
+            "src/main/java/com/mycompany/paud/assets/images/logo.png",
+            "./src/main/java/com/mycompany/paud/assets/images/logo.png",
+            "../src/main/java/com/mycompany/paud/assets/images/logo.png"
+        };
+        for (String p : candidates) {
+            File f = new File(p);
+            if (f.exists()) return f;
+        }
+        return null;
+    }
+
+    private Icon fallbackLogoIcon(int size) {
+        BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(new Color(33, 150, 243));
+        g.fillOval(0, 0, size, size);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("SansSerif", Font.BOLD, Math.max(12, size / 2)));
+        FontMetrics fm = g.getFontMetrics();
+        String t = "P";
+        int x = (size - fm.stringWidth(t)) / 2;
+        int y = (size - fm.getHeight()) / 2 + fm.getAscent();
+        g.drawString(t, x, y);
+        g.dispose();
+        return new ImageIcon(img);
     }
 }

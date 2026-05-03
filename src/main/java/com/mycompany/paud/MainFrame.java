@@ -13,6 +13,8 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
 import java.time.*;
 import java.time.format.*;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class MainFrame extends JFrame {
     private int activeNav = 0;
     private JLabel headerTitle;
     private JComboBox<String> cbAngkatanSidebar;
+    private JLabel lblSchoolNameSidebar;
 
     private static final String[] NAV_NAMES = {"Dashboard", "Data Siswa", "Data Kelas", "Data Guru", "Data Pengguna", "Absensi Hari Ini", "Laporan Bulan", "Pengaturan"};
     private static final String[] CARD_KEYS = {"DASHBOARD", "DATASISWA", "DATAKELAS", "DATAGURU", "DATAPENGGUNA", "ABSENSI", "LAPORAN", "PENGATURAN"};
@@ -80,18 +83,8 @@ public class MainFrame extends JFrame {
         logo.setBackground(Color.WHITE);
         logo.setMaximumSize(new Dimension(230, 90));
 
-        JLabel logoIcon = new JLabel("🎒") {
-            @Override protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(33, 150, 243));
-                g2.fillOval(0, 0, getWidth(), getHeight());
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        logoIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 22));
-        logoIcon.setForeground(Color.WHITE);
+        JLabel logoIcon = new JLabel();
+        logoIcon.setIcon(loadLogoIcon(48));
         logoIcon.setPreferredSize(new Dimension(48, 48));
         logoIcon.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -101,11 +94,11 @@ public class MainFrame extends JFrame {
         JLabel sub = new JLabel("SISTEM ABSENSI PAUD");
         sub.setFont(new Font("SansSerif", Font.PLAIN, 10));
         sub.setForeground(Theme.TEXT_GRAY);
-        JLabel appName = new JLabel("TUNAS HARAPAN");
-        appName.setFont(new Font("SansSerif", Font.BOLD, 13));
-        appName.setForeground(Theme.TEXT_DARK);
+        lblSchoolNameSidebar = new JLabel(DataStore.getInstance().getNamaSekolah());
+        lblSchoolNameSidebar.setFont(new Font("SansSerif", Font.BOLD, 13));
+        lblSchoolNameSidebar.setForeground(Theme.TEXT_DARK);
         textCol.add(sub);
-        textCol.add(appName);
+        textCol.add(lblSchoolNameSidebar);
 
         logo.add(logoIcon);
         logo.add(textCol);
@@ -157,7 +150,7 @@ public class MainFrame extends JFrame {
 
         Guru guru = DataStore.getInstance().getGuruLogin();
         String namaGuru = (guru != null) ? guru.getNamaLengkap() : "Guest";
-        String kelGuru  = (guru != null) ? "Kelompok: " + guru.getKelompokAmpu() : "";
+        String kelGuru  = (guru != null) ? "Kelas: " + guru.getKelompokAmpu() : "";
 
         JPanel guruInfo = new JPanel();
         guruInfo.setOpaque(false);
@@ -397,6 +390,56 @@ public class MainFrame extends JFrame {
         return new ImageIcon(img);
     }
 
+    private Icon loadLogoIcon(int size) {
+        try {
+            ImageIcon raw = null;
+            File f = resolveLogoFile();
+            if (f != null && f.exists()) {
+                raw = new ImageIcon(f.getAbsolutePath());
+            } else {
+                URL u = MainFrame.class.getResource("/com/mycompany/paud/assets/images/logo.png");
+                if (u == null) u = MainFrame.class.getResource("/assets/images/logo.png");
+                if (u != null) raw = new ImageIcon(u);
+            }
+            if (raw == null || raw.getIconWidth() <= 0) return fallbackLogoIcon(size);
+            Image img = raw.getImage().getScaledInstance(size, size, Image.SCALE_SMOOTH);
+            return new ImageIcon(img);
+        } catch (Exception ignored) {
+            return fallbackLogoIcon(size);
+        }
+    }
+
+    private File resolveLogoFile() {
+        String[] candidates = {
+            "assets/images/logo.png",
+            "src/main/java/com/mycompany/paud/assets/images/logo.png",
+            "./src/main/java/com/mycompany/paud/assets/images/logo.png",
+            "../src/main/java/com/mycompany/paud/assets/images/logo.png"
+        };
+        for (String p : candidates) {
+            File f = new File(p);
+            if (f.exists()) return f;
+        }
+        return null;
+    }
+
+    private Icon fallbackLogoIcon(int size) {
+        BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(new Color(33, 150, 243));
+        g.fillOval(0, 0, size, size);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("SansSerif", Font.BOLD, Math.max(12, size / 2)));
+        FontMetrics fm = g.getFontMetrics();
+        String t = "P";
+        int x = (size - fm.stringWidth(t)) / 2;
+        int y = (size - fm.getHeight()) / 2 + fm.getAscent();
+        g.drawString(t, x, y);
+        g.dispose();
+        return new ImageIcon(img);
+    }
+
     private void selectNav(int idx) {
         for (int i = 0; i < navLabels.length; i++) {
             int realIdx = visibleNavIndexes.get(i);
@@ -490,5 +533,13 @@ public class MainFrame extends JFrame {
         contentArea.add(laporanPanel,   "LAPORAN");
         contentArea.add(pengaturanPanel,"PENGATURAN");
         return contentArea;
+    }
+
+    public void refreshSchoolBranding() {
+        if (lblSchoolNameSidebar != null) {
+            lblSchoolNameSidebar.setText(DataStore.getInstance().getNamaSekolah());
+            lblSchoolNameSidebar.revalidate();
+            lblSchoolNameSidebar.repaint();
+        }
     }
 }

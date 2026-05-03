@@ -135,6 +135,12 @@ public class DatabaseHelper {
             "  status      TEXT NOT NULL DEFAULT '-'," +
             "  FOREIGN KEY (siswa_id) REFERENCES siswa(id) ON DELETE CASCADE," +
             "  UNIQUE(siswa_id, tanggal)" +
+            ")",
+
+            // Tabel pengaturan aplikasi
+            "CREATE TABLE IF NOT EXISTS app_settings (" +
+            "  kunci       TEXT PRIMARY KEY," +
+            "  nilai       TEXT NOT NULL DEFAULT ''" +
             ")"
         };
 
@@ -238,8 +244,26 @@ public class DatabaseHelper {
                 for (String[] s : siswas) insertSiswa(s[0], s[1], s[2], s[3]);
                 System.out.println("[DB] Default siswa dimasukkan.");
             }
+            ensureDefaultSettings();
         } catch (Exception e) {
             System.err.println("[DB] Error insertDefaultData: " + e.getMessage());
+        }
+    }
+
+    private void ensureDefaultSettings() {
+        upsertSettingIfAbsent("nama_sekolah", "TUNAS HARAPAN");
+    }
+
+    private void upsertSettingIfAbsent(String key, String value) {
+        if (!isConnected()) return;
+        String sql = "INSERT INTO app_settings(kunci, nilai) VALUES(?, ?) " +
+                     "ON CONFLICT(kunci) DO NOTHING";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, key);
+            ps.setString(2, value == null ? "" : value);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("[DB] Error upsertSettingIfAbsent: " + e.getMessage());
         }
     }
 
@@ -953,6 +977,36 @@ public class DatabaseHelper {
             System.err.println("[DB] Error getDaftarAngkatan: " + e.getMessage());
         }
         return list;
+    }
+
+    public String getSetting(String key, String defaultValue) {
+        if (!isConnected()) return defaultValue;
+        String sql = "SELECT nilai FROM app_settings WHERE kunci=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, key);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String v = rs.getString(1);
+                return (v == null || v.trim().isEmpty()) ? defaultValue : v.trim();
+            }
+        } catch (SQLException e) {
+            System.err.println("[DB] Error getSetting: " + e.getMessage());
+        }
+        return defaultValue;
+    }
+
+    public boolean setSetting(String key, String value) {
+        if (!isConnected()) return false;
+        String sql = "INSERT INTO app_settings(kunci, nilai) VALUES(?, ?) " +
+                     "ON CONFLICT(kunci) DO UPDATE SET nilai=excluded.nilai";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, key);
+            ps.setString(2, value == null ? "" : value.trim());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("[DB] Error setSetting: " + e.getMessage());
+            return false;
+        }
     }
 
     public List<Object[]> getDetailAbsensiSiswaBulanan(int siswaId, int tahun, int bulan) {

@@ -57,6 +57,16 @@ public class DataStore {
         this.activeAngkatan = (angkatan == null || angkatan.trim().isEmpty()) ? null : angkatan.trim();
     }
 
+    public String getNamaSekolah() {
+        return db.getSetting("nama_sekolah", "TUNAS HARAPAN");
+    }
+
+    public boolean setNamaSekolah(String nama) {
+        String v = (nama == null) ? "" : nama.trim();
+        if (v.isEmpty()) return false;
+        return db.setSetting("nama_sekolah", v);
+    }
+
     // ===== KELAS =====
     public List<Kelas> getDaftarKelas() { return db.getAllKelas(); }
     public Kelas getKelasById(int id) { return db.getKelasById(id); }
