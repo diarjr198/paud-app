@@ -19,6 +19,7 @@ public class PengaturanPanel extends JPanel {
     private JTextField tfJamMasuk;
     private JTextField tfJamPulang;
 
+    // Menjalankan inisialisasi objek PengaturanPanel.
     public PengaturanPanel() {
         setLayout(new BorderLayout());
         setOpaque(false);
@@ -59,6 +60,7 @@ public class PengaturanPanel extends JPanel {
         add(wrap, BorderLayout.CENTER);
     }
 
+    // Menangani proses: setting row.
     private JPanel settingRow(String label, JComponent field) {
         JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setOpaque(false);
@@ -73,6 +75,7 @@ public class PengaturanPanel extends JPanel {
         return row;
     }
 
+    // Menangani proses: style field.
     private void styleField(JTextField tf) {
         tf.setFont(Theme.FONT_BODY);
         tf.setBorder(BorderFactory.createCompoundBorder(
@@ -81,6 +84,7 @@ public class PengaturanPanel extends JPanel {
         tf.setPreferredSize(new Dimension(250, 32));
     }
 
+    // Menangani proses: make btn.
     private JButton makeBtn(String text, Color bg, ActionListener al) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -103,6 +107,7 @@ public class PengaturanPanel extends JPanel {
         return b;
     }
 
+    // Menangani proses: simpan pengaturan.
     private void simpanPengaturan() {
         String nama = tfNamaSekolah == null ? "" : tfNamaSekolah.getText().trim();
         String jamMasuk = tfJamMasuk == null ? "" : tfJamMasuk.getText().trim();

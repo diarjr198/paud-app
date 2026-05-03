@@ -17,6 +17,7 @@ public class DonutChart extends JPanel {
     private String label;
     private String sublabel;
 
+    // Menjalankan inisialisasi objek DonutChart.
     public DonutChart(double percentage, Color arcColor, String label, String sublabel) {
         this.percentage = percentage;
         this.arcColor = arcColor;
@@ -26,6 +27,7 @@ public class DonutChart extends JPanel {
         setPreferredSize(new Dimension(130, 130));
     }
 
+    // Menangani proses: set percentage.
     public void setPercentage(double pct, String lbl, String sub) {
         this.percentage = pct;
         this.label = lbl;
@@ -34,6 +36,7 @@ public class DonutChart extends JPanel {
     }
 
     @Override
+    // Menangani proses: paint component.
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();

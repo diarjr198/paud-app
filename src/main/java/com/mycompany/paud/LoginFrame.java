@@ -23,6 +23,7 @@ public class LoginFrame extends JFrame {
     private JPasswordField tfPassword;
     private JLabel        lblError;
 
+    // Menjalankan inisialisasi objek LoginFrame.
     public LoginFrame() {
         setTitle("Login - Sistem Absensi PAUD " + DataStore.getInstance().getNamaSekolah());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,6 +33,7 @@ public class LoginFrame extends JFrame {
         setContentPane(buildContent());
     }
 
+    // Menyusun komponen isi halaman.
     private JPanel buildContent() {
         // Background gradient
         JPanel bg = new JPanel(new GridBagLayout()) {
@@ -141,6 +143,7 @@ public class LoginFrame extends JFrame {
         return bg;
     }
 
+    // Memproses login dari input pengguna.
     private void doLogin() {
         String user = tfUsername.getText().trim();
         String pass = getPasswordInput().trim();
@@ -162,6 +165,7 @@ public class LoginFrame extends JFrame {
         }
     }
 
+    // Menangani proses: open register.
     private void openRegister() {
         RegisterFrame reg = new RegisterFrame(this);
         reg.setVisible(true);
@@ -175,6 +179,7 @@ public class LoginFrame extends JFrame {
         return l;
     }
 
+    // Menangani proses: input field.
     private JTextField inputField(String placeholder) {
         JTextField tf = new JTextField();
         tf.setFont(Theme.FONT_BODY);
@@ -185,9 +190,11 @@ public class LoginFrame extends JFrame {
         tf.setForeground(Theme.TEXT_GRAY);
         tf.setText(placeholder);
         tf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 if (tf.getText().equals(placeholder)) { tf.setText(""); tf.setForeground(Theme.TEXT_DARK); }
             }
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (tf.getText().isEmpty()) { tf.setText(placeholder); tf.setForeground(Theme.TEXT_GRAY); }
             }
@@ -195,6 +202,7 @@ public class LoginFrame extends JFrame {
         return tf;
     }
 
+    // Menangani proses: style password field.
     private void stylePasswordField(JPasswordField pf, String placeholder) {
         pf.setFont(Theme.FONT_BODY);
         pf.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
@@ -205,11 +213,13 @@ public class LoginFrame extends JFrame {
         pf.setForeground(Theme.TEXT_GRAY);
         pf.setText(placeholder);
         pf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 if (String.valueOf(pf.getPassword()).equals(placeholder)) {
                     pf.setText(""); pf.setEchoChar('●'); pf.setForeground(Theme.TEXT_DARK);
                 }
             }
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (pf.getPassword().length == 0) {
                     pf.setEchoChar((char)0); pf.setText(placeholder); pf.setForeground(Theme.TEXT_GRAY);
@@ -218,11 +228,13 @@ public class LoginFrame extends JFrame {
         });
     }
 
+    // Menangani proses: get password input.
     private String getPasswordInput() {
         String raw = new String(tfPassword.getPassword());
         return "Masukkan password".equals(raw) ? "" : raw;
     }
 
+    // Menangani proses: clear password for retry.
     private void clearPasswordForRetry() {
         tfPassword.setText("");
         tfPassword.setEchoChar('●');
@@ -230,6 +242,7 @@ public class LoginFrame extends JFrame {
         SwingUtilities.invokeLater(() -> tfPassword.requestFocusInWindow());
     }
 
+    // Menangani proses: make round btn.
     private JButton makeRoundBtn(String text, Color bg) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -251,6 +264,7 @@ public class LoginFrame extends JFrame {
         return b;
     }
 
+    // Menangani proses: make link btn.
     private JButton makeLinkBtn(String text) {
         JButton b = new JButton(text);
         b.setFont(new Font("SansSerif", Font.PLAIN, 12));
@@ -263,6 +277,7 @@ public class LoginFrame extends JFrame {
         return b;
     }
 
+    // Menangani proses: wrap full.
     private JPanel wrapFull(JComponent c) {
         JPanel p = new JPanel(new BorderLayout());
         p.setOpaque(false);
@@ -271,6 +286,7 @@ public class LoginFrame extends JFrame {
         return p;
     }
 
+    // Menangani proses: make separator.
     private JPanel makeSeparator() {
         JPanel p = new JPanel(new BorderLayout(8, 0));
         p.setOpaque(false);
@@ -283,6 +299,7 @@ public class LoginFrame extends JFrame {
         return p;
     }
 
+    // Menangani proses: load logo icon.
     private Icon loadLogoIcon(int size) {
         try {
             ImageIcon raw = null;
@@ -302,6 +319,7 @@ public class LoginFrame extends JFrame {
         }
     }
 
+    // Menangani proses: resolve logo file.
     private File resolveLogoFile() {
         String[] candidates = {
             "assets/images/logo.png",
@@ -316,6 +334,7 @@ public class LoginFrame extends JFrame {
         return null;
     }
 
+    // Menangani proses: fallback logo icon.
     private Icon fallbackLogoIcon(int size) {
         BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();

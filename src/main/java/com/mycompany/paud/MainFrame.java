@@ -42,6 +42,7 @@ public class MainFrame extends JFrame {
     private static final String[] NAV_NAMES = {"Dashboard", "Data Siswa", "Data Kelas", "Data Guru", "Data Pengguna", "Absensi Hari Ini", "Laporan Bulan", "Pengaturan"};
     private static final String[] CARD_KEYS = {"DASHBOARD", "DATASISWA", "DATAKELAS", "DATAGURU", "DATAPENGGUNA", "ABSENSI", "LAPORAN", "PENGATURAN"};
 
+    // Menjalankan inisialisasi objek MainFrame.
     public MainFrame() {
         setTitle("Java NetBeans PAUD Mockup");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,6 +52,7 @@ public class MainFrame extends JFrame {
         buildUI();
     }
 
+    // Menyusun tampilan utama aplikasi.
     private void buildUI() {
         JPanel root = new JPanel(new BorderLayout());
         root.setBackground(Theme.BG_MAIN);
@@ -201,6 +203,7 @@ public class MainFrame extends JFrame {
         return sidebar;
     }
 
+    // Menangani proses: resolve visible nav indexes.
     private List<Integer> resolveVisibleNavIndexes() {
         List<Integer> idx = new ArrayList<>();
         Guru g = DataStore.getInstance().getGuruLogin();
@@ -216,10 +219,12 @@ public class MainFrame extends JFrame {
         return idx;
     }
 
+    // Menangani proses: init angkatan sidebar options.
     private void initAngkatanSidebarOptions() {
         refreshAngkatanSidebarOptions(false);
     }
 
+    // Menangani proses: pick default angkatan.
     private String pickDefaultAngkatan(List<String> list, int tahunSekarang) {
         String fallback = list.get(list.size() - 1);
         String exact = null;
@@ -240,6 +245,7 @@ public class MainFrame extends JFrame {
         return fallback;
     }
 
+    // Menangani proses: refresh angkatan sidebar options.
     public void refreshAngkatanSidebarOptions(boolean preserveCurrentSelection) {
         if (cbAngkatanSidebar == null) return;
         String current = preserveCurrentSelection ? (String) cbAngkatanSidebar.getSelectedItem() : null;
@@ -263,6 +269,7 @@ public class MainFrame extends JFrame {
         applyAngkatanFilterRefresh();
     }
 
+    // Menangani proses: apply angkatan filter refresh.
     private void applyAngkatanFilterRefresh() {
         if (dataSiswaPanel != null) dataSiswaPanel.loadTable();
         if (absensiPanel != null) absensiPanel.refreshGrid();
@@ -270,6 +277,7 @@ public class MainFrame extends JFrame {
         if (dashPanel != null) dashPanel.refresh();
     }
 
+    // Menangani proses: build nav item.
     private JLabel buildNavItem(int idx) {
         JLabel lbl = new JLabel(NAV_NAMES[idx]) {
             @Override protected void paintComponent(Graphics g) {
@@ -310,6 +318,7 @@ public class MainFrame extends JFrame {
         return lbl;
     }
 
+    // Menangani proses: make nav icon.
     private Icon makeNavIcon(int idx, Color color) {
         final int s = 16;
         BufferedImage img = new BufferedImage(s, s, BufferedImage.TYPE_INT_ARGB);
@@ -390,6 +399,7 @@ public class MainFrame extends JFrame {
         return new ImageIcon(img);
     }
 
+    // Menangani proses: load logo icon.
     private Icon loadLogoIcon(int size) {
         try {
             ImageIcon raw = null;
@@ -409,6 +419,7 @@ public class MainFrame extends JFrame {
         }
     }
 
+    // Menangani proses: resolve logo file.
     private File resolveLogoFile() {
         String[] candidates = {
             "assets/images/logo.png",
@@ -423,6 +434,7 @@ public class MainFrame extends JFrame {
         return null;
     }
 
+    // Menangani proses: fallback logo icon.
     private Icon fallbackLogoIcon(int size) {
         BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
@@ -440,6 +452,7 @@ public class MainFrame extends JFrame {
         return new ImageIcon(img);
     }
 
+    // Memindahkan halaman sesuai menu yang dipilih.
     private void selectNav(int idx) {
         for (int i = 0; i < navLabels.length; i++) {
             int realIdx = visibleNavIndexes.get(i);
@@ -501,6 +514,7 @@ public class MainFrame extends JFrame {
         return header;
     }
 
+    // Menangani proses: update clock.
     private void updateClock(JLabel lbl) {
         LocalDateTime now = LocalDateTime.now();
         String day = now.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("id")).toUpperCase();
@@ -535,6 +549,7 @@ public class MainFrame extends JFrame {
         return contentArea;
     }
 
+    // Menangani proses: refresh school branding.
     public void refreshSchoolBranding() {
         if (lblSchoolNameSidebar != null) {
             lblSchoolNameSidebar.setText(DataStore.getInstance().getNamaSekolah());

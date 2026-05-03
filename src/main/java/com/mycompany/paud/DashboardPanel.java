@@ -17,6 +17,7 @@ public class DashboardPanel extends JPanel {
     private DonutChart chartHadir, chartIzin, chartSakit;
     private DataStore ds = DataStore.getInstance();
 
+    // Menjalankan inisialisasi objek DashboardPanel.
     public DashboardPanel() {
         setLayout(new BorderLayout(0, 16));
         setOpaque(false);
@@ -25,10 +26,12 @@ public class DashboardPanel extends JPanel {
         add(Box.createVerticalGlue(), BorderLayout.CENTER);
     }
 
+    // Menangani proses: build ringkasan panel.
     private JPanel buildRingkasanPanel() {
         // Gradient card
         JPanel wrapper = new JPanel(new BorderLayout()) {
             @Override
+            // Menangani proses: paint component.
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -63,6 +66,7 @@ public class DashboardPanel extends JPanel {
         return wrapper;
     }
 
+    // Menangani proses: build stat card.
     private JPanel buildStatCard(String label, DonutChart chart) {
         RoundedPanel card = Theme.makeCard(16);
         card.setLayout(new BorderLayout(0, 6));
@@ -81,6 +85,7 @@ public class DashboardPanel extends JPanel {
         return card;
     }
 
+    // Menyegarkan tampilan agar sesuai data terbaru.
     public void refresh() {
         int total = ds.getTotalSiswa();
         if (total == 0) return;

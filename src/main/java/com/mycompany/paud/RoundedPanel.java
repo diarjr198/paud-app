@@ -15,6 +15,7 @@ public class RoundedPanel extends JPanel {
     private int arc;
     protected Color bg;
 
+    // Menjalankan inisialisasi objek RoundedPanel.
     public RoundedPanel(int arc, Color bg) {
         this.arc = arc;
         this.bg = bg;
@@ -22,6 +23,7 @@ public class RoundedPanel extends JPanel {
     }
 
     @Override
+    // Menangani proses: paint component.
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -21,6 +21,7 @@ public class DataKelasPanel extends JPanel {
 
     private static final String[] COLUMNS = {"ID", "Nama Kelas"};
 
+    // Menjalankan inisialisasi objek DataKelasPanel.
     public DataKelasPanel() {
         setLayout(new BorderLayout(16, 0));
         setOpaque(false);
@@ -30,6 +31,7 @@ public class DataKelasPanel extends JPanel {
         loadTable();
     }
 
+    // Menangani proses: build table side.
     private JPanel buildTableSide() {
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setOpaque(false);
@@ -83,6 +85,7 @@ public class DataKelasPanel extends JPanel {
         return p;
     }
 
+    // Menangani proses: build form side.
     private JPanel buildFormSide() {
         RoundedPanel form = Theme.makeCard(16);
         form.setLayout(new BorderLayout());
@@ -139,6 +142,7 @@ public class DataKelasPanel extends JPanel {
         return form;
     }
 
+    // Menangani proses: mulai tambah.
     private void mulaiTambah() {
         editingId = -1;
         clearFields();
@@ -148,6 +152,7 @@ public class DataKelasPanel extends JPanel {
         tfNama.requestFocusInWindow();
     }
 
+    // Menangani proses: pilih kelas.
     private void pilihKelas(Kelas k) {
         editingId = k.getId();
         tfNama.setText(k.getNama());
@@ -157,6 +162,7 @@ public class DataKelasPanel extends JPanel {
         tfNama.requestFocusInWindow();
     }
 
+    // Menyimpan data form ke database.
     private void simpan() {
         String nama = tfNama.getText().trim();
         if (nama.isEmpty()) { showError("Nama kelas tidak boleh kosong!"); return; }
@@ -176,6 +182,7 @@ public class DataKelasPanel extends JPanel {
         clearForm();
     }
 
+    // Menghapus data yang sedang dipilih.
     private void hapus() {
         if (editingId < 0) return;
         if (ds.kelasSedangDipakai(editingId)) {
@@ -196,6 +203,7 @@ public class DataKelasPanel extends JPanel {
         showSuccess("Kelas berhasil dihapus.");
     }
 
+    // Menangani proses: clear form.
     private void clearForm() {
         editingId = -1;
         clearFields();
@@ -204,11 +212,13 @@ public class DataKelasPanel extends JPanel {
         table.clearSelection();
     }
 
+    // Menangani proses: clear fields.
     private void clearFields() {
         tfNama.setText("");
         tfNama.setForeground(Theme.TEXT_DARK);
     }
 
+    // Memuat data terbaru ke tabel.
     public void loadTable() {
         List<Kelas> list = ds.getDaftarKelas();
         tableModel.setRowCount(0);
@@ -219,6 +229,7 @@ public class DataKelasPanel extends JPanel {
         renderWrappedStatus();
     }
 
+    // Menangani proses: render wrapped status.
     private void renderWrappedStatus() {
         if (lblStatus == null) return;
         if (statusSummaryText == null || statusSummaryText.isEmpty()) {
@@ -255,6 +266,7 @@ public class DataKelasPanel extends JPanel {
         lblStatus.setText(html.toString());
     }
 
+    // Menangani proses: f label.
     private JLabel fLabel(String t) {
         JLabel l = new JLabel(t);
         l.setFont(Theme.FONT_HEADER);
@@ -262,6 +274,7 @@ public class DataKelasPanel extends JPanel {
         return l;
     }
 
+    // Menangani proses: make btn.
     private JButton makeBtn(String text, Color bg, ActionListener al) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -284,10 +297,12 @@ public class DataKelasPanel extends JPanel {
         return b;
     }
 
+    // Menangani proses: show error.
     private void showError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Peringatan", JOptionPane.WARNING_MESSAGE);
     }
 
+    // Menangani proses: show success.
     private void showSuccess(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Berhasil", JOptionPane.INFORMATION_MESSAGE);
     }

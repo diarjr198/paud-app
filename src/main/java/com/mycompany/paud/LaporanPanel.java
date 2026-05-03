@@ -44,6 +44,7 @@ public class LaporanPanel extends JPanel {
     private static final DateTimeFormatter FMT_SHORT_ID =
             DateTimeFormatter.ofPattern("d MMM yyyy", new Locale("id", "ID"));
 
+    // Menjalankan inisialisasi objek LaporanPanel.
     public LaporanPanel() {
         setLayout(new BorderLayout(0, 12));
         setOpaque(false);
@@ -56,6 +57,7 @@ public class LaporanPanel extends JPanel {
         loadLaporan();
     }
 
+    // Menangani proses: build filter bar.
     private JPanel buildFilterBar() {
         JPanel bar = new JPanel();
         bar.setOpaque(false);
@@ -131,6 +133,7 @@ public class LaporanPanel extends JPanel {
         return bar;
     }
 
+    // Menangani proses: build body.
     private JPanel buildBody() {
         bodyLayout = new CardLayout();
         bodyPanel = new JPanel(bodyLayout);
@@ -146,6 +149,7 @@ public class LaporanPanel extends JPanel {
         return bodyPanel;
     }
 
+    // Menangani proses: build table.
     private JScrollPane buildTable() {
         String[] cols = {"ID","Nama Anak","Kelompok","Hadir","Izin","Sakit","Alpa","Total Hadir"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -196,6 +200,7 @@ public class LaporanPanel extends JPanel {
         return sp;
     }
 
+    // Menangani proses: build detail panel.
     private JPanel buildDetailPanel() {
         JPanel p = new JPanel(new BorderLayout(0, 10));
         p.setOpaque(false);
@@ -267,6 +272,7 @@ public class LaporanPanel extends JPanel {
         return p;
     }
 
+    // Menangani proses: build summary.
     private JPanel buildSummary() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
         p.setOpaque(false);
@@ -276,6 +282,7 @@ public class LaporanPanel extends JPanel {
         return p;
     }
 
+    // Memuat data laporan sesuai filter.
     public void loadLaporan() {
         int bulan = cbBulan.getSelectedIndex() + 1;
         int tahun = Integer.parseInt((String) cbTahun.getSelectedItem());
@@ -326,6 +333,7 @@ public class LaporanPanel extends JPanel {
             "  |  <b>Total Absensi Tercatat: " + (totalH+totalI+totalS+totalA) + "</b></html>");
     }
 
+    // Menangani proses: configure detail column.
     private void configureDetailColumn(boolean showDetail) {
         if (table == null) return;
         if (!showDetail) return;
@@ -339,6 +347,7 @@ public class LaporanPanel extends JPanel {
         col.setCellEditor(new DetailButtonEditor());
     }
 
+    // Menangani proses: reset main columns.
     private void resetMainColumns(boolean showDetail) {
         if (showDetail) {
             tableModel.setColumnIdentifiers(new String[]{"ID","Nama Anak","Kelompok","Hadir","Izin","Sakit","Alpa","Total Hadir","Detail"});
@@ -353,6 +362,7 @@ public class LaporanPanel extends JPanel {
         applyStatusRenderers();
     }
 
+    // Menangani proses: apply status renderers.
     private void applyStatusRenderers() {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(
@@ -378,6 +388,7 @@ public class LaporanPanel extends JPanel {
         }
     }
 
+    // Menangani proses: open detail siswa.
     private void openDetailSiswa(int modelRow) {
         if (modelRow < 0 || modelRow >= tableModel.getRowCount()) return;
         int siswaId = (int) tableModel.getValueAt(modelRow, 0);
@@ -419,14 +430,17 @@ public class LaporanPanel extends JPanel {
         bodyLayout.show(bodyPanel, "DETAIL");
     }
 
+    // Menangani proses: safe.
     private String safe(String v) {
         return (v == null || v.trim().isEmpty()) ? "-" : v.trim();
     }
 
+    // Menangani proses: show list view.
     private void showListView() {
         bodyLayout.show(bodyPanel, "LIST");
     }
 
+    // Menangani proses: refresh hari options.
     private void refreshHariOptions() {
         int bulan = cbBulan.getSelectedIndex() + 1;
         int tahun = Integer.parseInt((String) cbTahun.getSelectedItem());
@@ -448,6 +462,7 @@ public class LaporanPanel extends JPanel {
         }
     }
 
+    // Menangani proses: refresh kelas options.
     private void refreshKelasOptions() {
         if (cbKelas == null) return;
         String current = (String) cbKelas.getSelectedItem();
@@ -458,6 +473,7 @@ public class LaporanPanel extends JPanel {
         if (cbKelas.getSelectedItem() == null) cbKelas.setSelectedIndex(0);
     }
 
+    // Menangani proses: get visible kelas list.
     private List<Kelas> getVisibleKelasList() {
         List<Kelas> all = ds.getDaftarKelas();
         if (!ds.isGuruRoleLogin()) return all;
@@ -486,6 +502,7 @@ public class LaporanPanel extends JPanel {
             return this;
         }
         @Override
+        // Menangani proses: paint component.
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -503,6 +520,7 @@ public class LaporanPanel extends JPanel {
         DetailButtonEditor() {
             button = new JButton("Detail") {
                 @Override
+                // Menangani proses: paint component.
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -529,14 +547,17 @@ public class LaporanPanel extends JPanel {
             });
         }
         @Override
+        // Menangani proses: get table cell editor component.
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             editingRow = row;
             return button;
         }
         @Override
+        // Mengambil nilai properti yang dibutuhkan.
         public Object getCellEditorValue() { return "Detail"; }
     }
 
+    // Menangani proses: get detail table.
     private JTable getDetailTable() {
         if (detailPanel == null) return null;
         for (Component c : detailPanel.getComponents()) {
@@ -571,6 +592,7 @@ public class LaporanPanel extends JPanel {
         }
 
         @Override
+        // Menangani proses: paint component.
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setColor(getBackground());

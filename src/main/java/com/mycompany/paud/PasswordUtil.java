@@ -14,8 +14,10 @@ public final class PasswordUtil {
     private static final int KEY_BITS = 256;
     private static final String PREFIX = "pbkdf2$";
 
+    // Menjalankan inisialisasi objek PasswordUtil.
     private PasswordUtil() {}
 
+    // Mengubah password mentah menjadi hash aman.
     public static String hashPassword(String plain) {
         if (plain == null) plain = "";
         byte[] salt = new byte[SALT_BYTES];
@@ -26,6 +28,7 @@ public final class PasswordUtil {
                 Base64.getEncoder().encodeToString(hash);
     }
 
+    // Memeriksa kecocokan password dengan hash tersimpan.
     public static boolean verifyPassword(String plain, String stored) {
         if (plain == null || stored == null || stored.isEmpty()) return false;
         if (!isHashed(stored)) {
@@ -55,10 +58,12 @@ public final class PasswordUtil {
         return constantTimeEquals(actual, expected);
     }
 
+    // Mengecek apakah nilai sudah berupa hash password.
     public static boolean isHashed(String value) {
         return value != null && value.startsWith(PREFIX);
     }
 
+    // Menangani proses: pbkdf2.
     private static byte[] pbkdf2(char[] password, byte[] salt, int iterations, int keyBits) {
         try {
             PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, keyBits);
@@ -69,6 +74,7 @@ public final class PasswordUtil {
         }
     }
 
+    // Menangani proses: constant time equals.
     private static boolean constantTimeEquals(byte[] a, byte[] b) {
         if (a == null || b == null || a.length != b.length) return false;
         int result = 0;

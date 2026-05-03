@@ -34,6 +34,7 @@ public class Theme {
     public static final Font FONT_NAV_SEL  = new Font("SansSerif", Font.BOLD, 14);
     public static final Font FONT_BIG_PCT  = new Font("SansSerif", Font.BOLD, 26);
 
+    // Menangani proses: make card.
     public static RoundedPanel makeCard(int arc) {
         RoundedPanel p = new RoundedPanel(arc, CARD_BG);
         p.setBackground(CARD_BG);

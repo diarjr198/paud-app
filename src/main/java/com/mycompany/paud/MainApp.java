@@ -11,6 +11,7 @@ package com.mycompany.paud;
 import javax.swing.*;
 
 public class MainApp {
+    // Menjadi titik awal jalannya aplikasi.
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

@@ -43,6 +43,7 @@ public class DataSiswaPanel extends JPanel {
         "ID", "NPD", "NISN", "Nama Anak", "Kelas", "Angkatan", "Jenis Kelamin", "Agama", "Tempat Lahir", "Alamat", "Tgl Lahir", "Nama Wali", "Kontak Wali"
     };
 
+    // Menjalankan inisialisasi objek DataSiswaPanel.
     public DataSiswaPanel() {
         setLayout(new BorderLayout(16, 0));
         setOpaque(false);
@@ -295,6 +296,7 @@ public class DataSiswaPanel extends JPanel {
         table.clearSelection();
     }
 
+    // Menangani proses: pilih siswa.
     private void pilihSiswa(Siswa s) {
         editingId = s.getId();
         setTextValue(tfNpd, s.getNpd(), "Nomor peserta didik (NPD)");
@@ -320,6 +322,7 @@ public class DataSiswaPanel extends JPanel {
         scrollFormToTopAndFocusFirst();
     }
 
+    // Menyimpan data form ke database.
     private void simpan() {
         String npd  = getFieldText(tfNpd, "Nomor peserta didik (NPD)");
         String nisn = getFieldText(tfNisn, "Nomor induk siswa nasional (NISN)");
@@ -362,6 +365,7 @@ public class DataSiswaPanel extends JPanel {
         clearForm();
     }
 
+    // Menghapus data yang sedang dipilih.
     private void hapus() {
         if (editingId < 0) return;
         Siswa s = ds.getSiswaById(editingId);
@@ -378,6 +382,7 @@ public class DataSiswaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: clear form.
     private void clearForm() {
         editingId = -1;
         clearFields();
@@ -386,6 +391,7 @@ public class DataSiswaPanel extends JPanel {
         table.clearSelection();
     }
 
+    // Menangani proses: clear fields.
     private void clearFields() {
         setPlaceholder(tfNpd,         "Nomor peserta didik (NPD)");
         setPlaceholder(tfNisn,        "Nomor induk siswa nasional (NISN)");
@@ -419,6 +425,7 @@ public class DataSiswaPanel extends JPanel {
         updateStatus();
     }
 
+    // Menangani proses: notify angkatan sidebar refresh.
     private void notifyAngkatanSidebarRefresh() {
         Window w = SwingUtilities.getWindowAncestor(this);
         if (w instanceof MainFrame) {
@@ -426,6 +433,7 @@ public class DataSiswaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: update status.
     private void updateStatus() {
         int total = ds.getTotalSiswa();
         StringBuilder sb = new StringBuilder("Total: ").append(total).append(" siswa");
@@ -438,6 +446,7 @@ public class DataSiswaPanel extends JPanel {
         renderWrappedStatus();
     }
 
+    // Menangani proses: render wrapped status.
     private void renderWrappedStatus() {
         if (lblStatus == null) return;
         if (statusSummaryText == null || statusSummaryText.isEmpty()) {
@@ -474,10 +483,12 @@ public class DataSiswaPanel extends JPanel {
         lblStatus.setText(html.toString());
     }
 
+    // Menangani proses: refresh kelas filter options.
     private void refreshKelasFilterOptions(List<Siswa> all) {
         refreshKelasFilterOptions();
     }
 
+    // Menangani proses: refresh kelas filter options.
     private void refreshKelasFilterOptions() {
         if (cbFilterKelas == null) return;
         String current = (String) cbFilterKelas.getSelectedItem();
@@ -495,6 +506,7 @@ public class DataSiswaPanel extends JPanel {
         ignoreFilterEvent = false;
     }
 
+    // Menangani proses: load kelas form options.
     private void loadKelasFormOptions() {
         if (cbKelas == null) return;
         String current = (String) cbKelas.getSelectedItem();
@@ -510,12 +522,14 @@ public class DataSiswaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: get selected filter kelas.
     private String getSelectedFilterKelas() {
         if (cbFilterKelas == null) return "";
         Object selected = cbFilterKelas.getSelectedItem();
         return selected == null ? "" : selected.toString();
     }
 
+    // Menangani proses: build tahun angkatan options.
     private String[] buildTahunAngkatanOptions() {
         int start = Year.now().getValue() + 1;
         int end = 1900;
@@ -525,6 +539,7 @@ public class DataSiswaPanel extends JPanel {
         return years;
     }
 
+    // Menangani proses: get visible kelas list.
     private List<Kelas> getVisibleKelasList() {
         List<Kelas> all = ds.getDaftarKelas();
         if (!ds.isGuruRoleLogin()) return all;
@@ -544,6 +559,7 @@ public class DataSiswaPanel extends JPanel {
         return l;
     }
 
+    // Menangani proses: f field.
     private JTextField fField(String placeholder) {
         JTextField tf = new JTextField();
         tf.setFont(Theme.FONT_BODY);
@@ -554,10 +570,12 @@ public class DataSiswaPanel extends JPanel {
             new EmptyBorder(4,8,4,8)));
         setPlaceholder(tf, placeholder);
         tf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 ensureFieldVisible(tf);
                 if (tf.getText().equals(placeholder)) { tf.setText(""); tf.setForeground(Theme.TEXT_DARK); }
             }
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (tf.getText().isEmpty()) setPlaceholder(tf, placeholder);
             }
@@ -565,16 +583,19 @@ public class DataSiswaPanel extends JPanel {
         return tf;
     }
 
+    // Menangani proses: set placeholder.
     private void setPlaceholder(JTextField tf, String ph) {
         tf.setText(ph);
         tf.setForeground(Theme.TEXT_GRAY);
     }
 
+    // Menangani proses: get field text.
     private String getFieldText(JTextField tf, String placeholder) {
         String t = tf.getText().trim();
         return t.equals(placeholder) ? "" : t;
     }
 
+    // Menangani proses: set text value.
     private void setTextValue(JTextField tf, String value, String placeholder) {
         if (value == null || value.isEmpty()) {
             setPlaceholder(tf, placeholder);
@@ -584,6 +605,7 @@ public class DataSiswaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: get tanggal lahir value.
     private String getTanggalLahirValue() {
         if (spTanggalLahir == null) return "";
         try {
@@ -596,6 +618,7 @@ public class DataSiswaPanel extends JPanel {
         return ld.format(FMT_TGL);
     }
 
+    // Menangani proses: set tanggal lahir value.
     private void setTanggalLahirValue(String tgl) {
         if (spTanggalLahir == null) return;
         LocalDate value = LocalDate.now();
@@ -609,6 +632,7 @@ public class DataSiswaPanel extends JPanel {
         spTanggalLahir.setValue(java.sql.Date.valueOf(value));
     }
 
+    // Menangani proses: scroll form to top and focus first.
     private void scrollFormToTopAndFocusFirst() {
         if (formScroll != null) {
             SwingUtilities.invokeLater(() ->
@@ -620,6 +644,7 @@ public class DataSiswaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: install auto scroll on focus.
     private void installAutoScrollOnFocus(JComponent comp) {
         comp.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
@@ -628,6 +653,7 @@ public class DataSiswaPanel extends JPanel {
         });
     }
 
+    // Menangani proses: ensure field visible.
     private void ensureFieldVisible(JComponent comp) {
         if (formScroll == null || comp == null) return;
         SwingUtilities.invokeLater(() -> {
@@ -640,6 +666,7 @@ public class DataSiswaPanel extends JPanel {
         });
     }
 
+    // Menangani proses: make btn.
     private JButton makeBtn(String text, Color bg, ActionListener al) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -663,10 +690,12 @@ public class DataSiswaPanel extends JPanel {
         return b;
     }
 
+    // Menangani proses: show error.
     private void showError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Peringatan", JOptionPane.WARNING_MESSAGE);
     }
 
+    // Menangani proses: show success.
     private void showSuccess(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Berhasil", JOptionPane.INFORMATION_MESSAGE);
     }

@@ -32,12 +32,14 @@ public class DatabaseHelper {
     private static final String DB_FILE = "paud_absensi.db";
     private static final String DB_URL  = "jdbc:sqlite:" + DB_FILE;
 
+    // Menjalankan inisialisasi objek DatabaseHelper.
     private DatabaseHelper() {
         connect();
         createTables();
         insertDefaultData();
     }
 
+    // Menangani proses: get instance.
     public static DatabaseHelper getInstance() {
         if (instance == null) instance = new DatabaseHelper();
         return instance;
@@ -45,6 +47,7 @@ public class DatabaseHelper {
 
     // ===================== KONEKSI =====================
 
+    // Membuka koneksi ke database SQLite.
     private void connect() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -64,6 +67,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: is connected.
     public boolean isConnected() {
         try {
             return connection != null && !connection.isClosed();
@@ -72,6 +76,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menutup koneksi atau resource yang sedang dipakai.
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -85,6 +90,7 @@ public class DatabaseHelper {
 
     // ===================== CREATE TABLES =====================
 
+    // Membuat tabel database jika belum tersedia.
     private void createTables() {
         if (!isConnected()) return;
         String[] sqls = {
@@ -195,6 +201,7 @@ public class DatabaseHelper {
 
     // ===================== DEFAULT DATA =====================
 
+    // Menangani proses: insert default data.
     private void insertDefaultData() {
         if (!isConnected()) return;
         // Hanya insert jika tabel masih kosong
@@ -250,10 +257,12 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: ensure default settings.
     private void ensureDefaultSettings() {
         upsertSettingIfAbsent("nama_sekolah", "TUNAS HARAPAN");
     }
 
+    // Menangani proses: upsert setting if absent.
     private void upsertSettingIfAbsent(String key, String value) {
         if (!isConnected()) return;
         String sql = "INSERT INTO app_settings(kunci, nilai) VALUES(?, ?) " +
@@ -274,6 +283,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: ensure default guru roles.
     private void ensureDefaultGuruRoles() {
         if (!isConnected()) return;
         try (Statement st = connection.createStatement()) {
@@ -286,6 +296,7 @@ public class DatabaseHelper {
 
     // ===================== KELAS CRUD =====================
 
+    // Menangani proses: get all kelas.
     public List<Kelas> getAllKelas() {
         List<Kelas> list = new ArrayList<>();
         if (!isConnected()) return list;
@@ -301,6 +312,7 @@ public class DatabaseHelper {
         return list;
     }
 
+    // Menangani proses: get kelas by id.
     public Kelas getKelasById(int id) {
         if (!isConnected()) return null;
         String sql = "SELECT id, nama FROM kelas WHERE id = ?";
@@ -314,6 +326,7 @@ public class DatabaseHelper {
         return null;
     }
 
+    // Menangani proses: kelas exists.
     public boolean kelasExists(String nama, Integer excludeId) {
         if (!isConnected()) return false;
         String sql = (excludeId == null)
@@ -329,6 +342,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: insert kelas.
     public int insertKelas(String nama) {
         if (!isConnected()) return -1;
         String sql = "INSERT INTO kelas(nama) VALUES(?)";
@@ -343,6 +357,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: update kelas.
     public boolean updateKelas(int id, String nama) {
         if (!isConnected()) return false;
         String sql = "UPDATE kelas SET nama=? WHERE id=?";
@@ -356,6 +371,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: delete kelas.
     public boolean deleteKelas(int id) {
         if (!isConnected()) return false;
         String sql = "DELETE FROM kelas WHERE id=?";
@@ -370,6 +386,7 @@ public class DatabaseHelper {
 
     // ===================== GURU CRUD =====================
 
+    // Menangani proses: login guru.
     public Guru loginGuru(String username, String password) {
         if (!isConnected()) return null;
         String sql = "SELECT * FROM guru WHERE username = ?";
@@ -392,6 +409,7 @@ public class DatabaseHelper {
         return null;
     }
 
+    // Menangani proses: username exists.
     public boolean usernameExists(String username) {
         if (!isConnected()) return false;
         try (PreparedStatement ps = connection.prepareStatement(
@@ -438,6 +456,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: get all guru.
     public List<Guru> getAllGuru() {
         List<Guru> list = new ArrayList<>();
         if (!isConnected()) return list;
@@ -452,6 +471,7 @@ public class DatabaseHelper {
         return list;
     }
 
+    // Menangani proses: get guru by username.
     public Guru getGuruByUsername(String username) {
         if (!isConnected()) return null;
         String sql = "SELECT * FROM guru WHERE username = ?";
@@ -495,6 +515,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: upgrade password hash.
     private void upgradePasswordHash(String username, String plainPassword) {
         String sql = "UPDATE guru SET password=? WHERE username=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -537,12 +558,14 @@ public class DatabaseHelper {
         );
     }
 
+    // Menangani proses: normalize role.
     private String normalizeRole(String role) {
         if (role == null || role.trim().isEmpty()) return "Guru";
         if ("administrator".equalsIgnoreCase(role)) return "Administrator";
         return "Guru";
     }
 
+    // Menangani proses: delete guru.
     public boolean deleteGuru(String username) {
         if (!isConnected()) return false;
         String sql = "DELETE FROM guru WHERE username = ?";
@@ -557,14 +580,17 @@ public class DatabaseHelper {
 
     // ===================== SISWA CRUD =====================
 
+    // Menangani proses: get all siswa.
     public List<Siswa> getAllSiswa() {
         return getAllSiswa(LocalDate.now(), null);
     }
 
+    // Menangani proses: get all siswa.
     public List<Siswa> getAllSiswa(LocalDate tanggal) {
         return getAllSiswa(tanggal, null);
     }
 
+    // Menangani proses: get all siswa.
     public List<Siswa> getAllSiswa(LocalDate tanggal, String angkatan) {
         List<Siswa> list = new ArrayList<>();
         if (!isConnected()) return list;
@@ -603,6 +629,7 @@ public class DatabaseHelper {
         return list;
     }
 
+    // Menangani proses: get siswa by id.
     public Siswa getSiswaById(int id) {
         if (!isConnected()) return null;
         try (PreparedStatement ps = connection.prepareStatement(
@@ -628,6 +655,7 @@ public class DatabaseHelper {
         return null;
     }
 
+    // Menangani proses: is duplicate siswa.
     public boolean isDuplicateSiswa(String nama, String namaOrangTua, int excludeId) {
         if (!isConnected()) return false;
         try (PreparedStatement ps = connection.prepareStatement(
@@ -726,6 +754,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: delete siswa.
     public boolean deleteSiswa(int id) {
         if (!isConnected()) return false;
         try (PreparedStatement ps = connection.prepareStatement(
@@ -738,10 +767,12 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: count siswa.
     public int countSiswa() {
         return countSiswa(null);
     }
 
+    // Menangani proses: count siswa.
     public int countSiswa(String angkatan) {
         if (!isConnected()) return 0;
         boolean useAngkatan = angkatan != null && !angkatan.trim().isEmpty();
@@ -755,6 +786,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: count siswa by kelompok.
     public int countSiswaByKelompok(String kelompok) {
         if (!isConnected()) return 0;
         try (PreparedStatement ps = connection.prepareStatement(
@@ -774,6 +806,7 @@ public class DatabaseHelper {
         return simpanAbsensi(siswaId, status, LocalDate.now());
     }
 
+    // Menangani proses: simpan absensi.
     public boolean simpanAbsensi(int siswaId, String status, LocalDate tanggal) {
         if (!isConnected()) return false;
         // UPSERT: insert atau update jika sudah ada untuk tanggal terpilih
@@ -792,6 +825,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: hapus absensi.
     public int hapusAbsensi(LocalDate tanggal, String kelas) {
         if (!isConnected()) return 0;
         boolean byKelas = kelas != null && !kelas.trim().isEmpty();
@@ -826,6 +860,7 @@ public class DatabaseHelper {
         return countAbsensiHariIni(status, null);
     }
 
+    // Menangani proses: count absensi hari ini.
     public int countAbsensiHariIni(String status, String angkatan) {
         if (!isConnected()) return 0;
         boolean useAngkatan = angkatan != null && !angkatan.trim().isEmpty();
@@ -847,10 +882,12 @@ public class DatabaseHelper {
         return countBelumAbsen(LocalDate.now(), null);
     }
 
+    // Menangani proses: count belum absen.
     public int countBelumAbsen(LocalDate tanggal) {
         return countBelumAbsen(tanggal, null);
     }
 
+    // Menangani proses: count belum absen.
     public int countBelumAbsen(LocalDate tanggal, String angkatan) {
         if (!isConnected()) return countSiswa(angkatan);
         boolean useAngkatan = angkatan != null && !angkatan.trim().isEmpty();
@@ -883,14 +920,17 @@ public class DatabaseHelper {
      * @param hari  Hari dalam bulan (1-31), null untuk semua hari
      * @param status Status absensi (Hadir/Izin/Sakit/Alpa), null untuk semua status
      */
+    // Menangani proses: get laporan bulan filtered.
     public List<Object[]> getLaporanBulanFiltered(int tahun, int bulan, Integer hari, String status) {
         return getLaporanBulanFiltered(tahun, bulan, hari, status, null);
     }
 
+    // Menangani proses: get laporan bulan filtered.
     public List<Object[]> getLaporanBulanFiltered(int tahun, int bulan, Integer hari, String status, String kelas) {
         return getLaporanBulanFiltered(tahun, bulan, hari, status, kelas, null);
     }
 
+    // Menangani proses: get laporan bulan filtered.
     public List<Object[]> getLaporanBulanFiltered(int tahun, int bulan, Integer hari, String status, String kelas, String angkatan) {
         List<Object[]> list = new ArrayList<>();
         if (!isConnected()) return list;
@@ -966,6 +1006,7 @@ public class DatabaseHelper {
         return list;
     }
 
+    // Menangani proses: get daftar angkatan.
     public List<String> getDaftarAngkatan() {
         List<String> list = new ArrayList<>();
         if (!isConnected()) return list;
@@ -979,6 +1020,7 @@ public class DatabaseHelper {
         return list;
     }
 
+    // Menangani proses: get setting.
     public String getSetting(String key, String defaultValue) {
         if (!isConnected()) return defaultValue;
         String sql = "SELECT nilai FROM app_settings WHERE kunci=?";
@@ -995,6 +1037,7 @@ public class DatabaseHelper {
         return defaultValue;
     }
 
+    // Menangani proses: set setting.
     public boolean setSetting(String key, String value) {
         if (!isConnected()) return false;
         String sql = "INSERT INTO app_settings(kunci, nilai) VALUES(?, ?) " +
@@ -1009,6 +1052,7 @@ public class DatabaseHelper {
         }
     }
 
+    // Menangani proses: get detail absensi siswa bulanan.
     public List<Object[]> getDetailAbsensiSiswaBulanan(int siswaId, int tahun, int bulan) {
         List<Object[]> list = new ArrayList<>();
         if (!isConnected()) return list;
@@ -1031,11 +1075,13 @@ public class DatabaseHelper {
 
     // ===================== UTILS =====================
 
+    // Menangani proses: show dberror.
     private void showDBError(String msg) {
         System.err.println("[DB ERROR] " + msg);
         javax.swing.JOptionPane.showMessageDialog(null,
             msg, "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
     }
 
+    // Mengambil nilai properti yang dibutuhkan.
     public String getDbFile() { return DB_FILE; }
 }

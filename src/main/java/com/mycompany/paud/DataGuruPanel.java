@@ -39,6 +39,7 @@ public class DataGuruPanel extends JPanel {
         "Username", "NIP", "Nama Guru", "Tempat Lahir", "Tanggal Lahir", "Jenis Kelamin", "Agama", "Kelas", "Alamat"
     };
 
+    // Menjalankan inisialisasi objek DataGuruPanel.
     public DataGuruPanel() {
         setLayout(new BorderLayout(16, 0));
         setOpaque(false);
@@ -48,6 +49,7 @@ public class DataGuruPanel extends JPanel {
         loadTable();
     }
 
+    // Menangani proses: build table side.
     private JPanel buildTableSide() {
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setOpaque(false);
@@ -143,6 +145,7 @@ public class DataGuruPanel extends JPanel {
         return p;
     }
 
+    // Menangani proses: build form side.
     private JPanel buildFormSide() {
         RoundedPanel form = Theme.makeCard(16);
         form.setLayout(new BorderLayout(0, 0));
@@ -259,6 +262,7 @@ public class DataGuruPanel extends JPanel {
         return form;
     }
 
+    // Menangani proses: mulai tambah.
     private void mulaiTambah() {
         editingUsername = null;
         clearFields();
@@ -268,6 +272,7 @@ public class DataGuruPanel extends JPanel {
         table.clearSelection();
     }
 
+    // Menangani proses: pilih guru.
     private void pilihGuru(Guru g) {
         editingUsername = g.getUsername();
         setTextValue(tfNip, g.getNip(), "Nomor induk pegawai (NIP)");
@@ -293,6 +298,7 @@ public class DataGuruPanel extends JPanel {
         scrollFormToTopAndFocusFirst();
     }
 
+    // Menyimpan data form ke database.
     private void simpan() {
         String nip = getFieldText(tfNip, "Nomor induk pegawai (NIP)");
         String nama = getFieldText(tfNama, "Nama lengkap guru");
@@ -358,6 +364,7 @@ public class DataGuruPanel extends JPanel {
         clearForm();
     }
 
+    // Menghapus data yang sedang dipilih.
     private void hapus() {
         if (editingUsername == null) return;
 
@@ -381,6 +388,7 @@ public class DataGuruPanel extends JPanel {
         }
     }
 
+    // Menangani proses: clear form.
     private void clearForm() {
         editingUsername = null;
         clearFields();
@@ -389,6 +397,7 @@ public class DataGuruPanel extends JPanel {
         table.clearSelection();
     }
 
+    // Menangani proses: clear fields.
     private void clearFields() {
         setPlaceholder(tfNip, "Nomor induk pegawai (NIP)");
         setPlaceholder(tfNama, "Nama lengkap guru");
@@ -403,6 +412,7 @@ public class DataGuruPanel extends JPanel {
         rebuildKelasChecks(null);
     }
 
+    // Memuat data terbaru ke tabel.
     public void loadTable() {
         refreshKelasFilterOptions();
         List<Guru> all = ds.getDaftarGuru();
@@ -430,17 +440,20 @@ public class DataGuruPanel extends JPanel {
         updateStatus(totalGuru, countPerKelas);
     }
 
+    // Menangani proses: match filter kelas.
     private boolean matchFilterKelas(String kelasAmpu, String filter) {
         if ("Semua".equals(filter)) return true;
         String v = kelasAmpu == null ? "" : kelasAmpu;
         return v.contains(filter);
     }
 
+    // Menangani proses: get selected filter kelas.
     private String getSelectedFilterKelas() {
         Object selected = cbFilterKelas.getSelectedItem();
         return selected == null ? "Semua" : selected.toString();
     }
 
+    // Menangani proses: refresh kelas filter options.
     private void refreshKelasFilterOptions() {
         if (cbFilterKelas == null) return;
         ignoreFilterEvent = true;
@@ -453,6 +466,7 @@ public class DataGuruPanel extends JPanel {
         ignoreFilterEvent = false;
     }
 
+    // Menangani proses: update status.
     private void updateStatus(int totalGuru, Map<String, Integer> countPerKelas) {
         StringBuilder sb = new StringBuilder("Total: ").append(totalGuru).append(" guru");
         for (Map.Entry<String, Integer> e : countPerKelas.entrySet()) {
@@ -462,6 +476,7 @@ public class DataGuruPanel extends JPanel {
         renderWrappedStatus();
     }
 
+    // Menangani proses: render wrapped status.
     private void renderWrappedStatus() {
         if (lblStatus == null) return;
         if (statusSummaryText == null || statusSummaryText.isEmpty()) {
@@ -498,6 +513,7 @@ public class DataGuruPanel extends JPanel {
         lblStatus.setText(html.toString());
     }
 
+    // Menangani proses: get kelas ampu value.
     private String getKelasAmpuValue() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, JCheckBox> e : kelasChecks.entrySet()) {
@@ -508,6 +524,7 @@ public class DataGuruPanel extends JPanel {
         return sb.toString();
     }
 
+    // Menangani proses: rebuild kelas checks.
     private void rebuildKelasChecks(String selectedCsv) {
         kelasChecks.clear();
         kelasOptionsPanel.removeAll();
@@ -523,6 +540,7 @@ public class DataGuruPanel extends JPanel {
         kelasOptionsPanel.repaint();
     }
 
+    // Menangani proses: contains kelas.
     private boolean containsKelas(String csv, String kelas) {
         if (csv == null || csv.trim().isEmpty()) return false;
         String[] parts = csv.split(",");
@@ -530,6 +548,7 @@ public class DataGuruPanel extends JPanel {
         return false;
     }
 
+    // Menangani proses: f label.
     private JLabel fLabel(String t) {
         JLabel l = new JLabel(t);
         l.setFont(Theme.FONT_HEADER);
@@ -537,6 +556,7 @@ public class DataGuruPanel extends JPanel {
         return l;
     }
 
+    // Menangani proses: f field.
     private JTextField fField(String placeholder) {
         JTextField tf = new JTextField();
         tf.setFont(Theme.FONT_BODY);
@@ -547,6 +567,7 @@ public class DataGuruPanel extends JPanel {
                 new EmptyBorder(4, 8, 4, 8)));
         setPlaceholder(tf, placeholder);
         tf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 ensureFieldVisible(tf);
                 if (tf.getText().equals(placeholder)) {
@@ -555,6 +576,7 @@ public class DataGuruPanel extends JPanel {
                 }
             }
 
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (tf.getText().isEmpty()) setPlaceholder(tf, placeholder);
             }
@@ -562,6 +584,7 @@ public class DataGuruPanel extends JPanel {
         return tf;
     }
 
+    // Menangani proses: f password.
     private JPasswordField fPassword(String placeholder) {
         JPasswordField pf = new JPasswordField();
         pf.setFont(Theme.FONT_BODY);
@@ -572,6 +595,7 @@ public class DataGuruPanel extends JPanel {
                 new EmptyBorder(4, 8, 4, 8)));
         setPasswordPlaceholder(pf, placeholder);
         pf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 ensureFieldVisible(pf);
                 if (pf.getForeground().equals(Theme.TEXT_GRAY)) {
@@ -581,6 +605,7 @@ public class DataGuruPanel extends JPanel {
                 }
             }
 
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (pf.getPassword().length == 0) setPasswordPlaceholder(pf, placeholder);
             }
@@ -588,22 +613,26 @@ public class DataGuruPanel extends JPanel {
         return pf;
     }
 
+    // Menangani proses: set placeholder.
     private void setPlaceholder(JTextField tf, String ph) {
         tf.setText(ph);
         tf.setForeground(Theme.TEXT_GRAY);
     }
 
+    // Menangani proses: set password placeholder.
     private void setPasswordPlaceholder(JPasswordField pf, String ph) {
         pf.setEchoChar((char) 0);
         pf.setText(ph);
         pf.setForeground(Theme.TEXT_GRAY);
     }
 
+    // Menangani proses: get field text.
     private String getFieldText(JTextField tf, String placeholder) {
         String t = tf.getText().trim();
         return t.equals(placeholder) ? "" : t;
     }
 
+    // Menangani proses: set text value.
     private void setTextValue(JTextField tf, String value, String placeholder) {
         if (value == null || value.isEmpty()) {
             setPlaceholder(tf, placeholder);
@@ -613,6 +642,7 @@ public class DataGuruPanel extends JPanel {
         }
     }
 
+    // Menangani proses: get tanggal lahir value.
     private String getTanggalLahirValue() {
         if (spTanggalLahir == null) return "";
         try {
@@ -625,6 +655,7 @@ public class DataGuruPanel extends JPanel {
         return ld.format(FMT_TGL);
     }
 
+    // Menangani proses: set tanggal lahir value.
     private void setTanggalLahirValue(String tgl) {
         if (spTanggalLahir == null) return;
         LocalDate value = LocalDate.now();
@@ -637,6 +668,7 @@ public class DataGuruPanel extends JPanel {
         spTanggalLahir.setValue(java.sql.Date.valueOf(value));
     }
 
+    // Menangani proses: install auto scroll on focus.
     private void installAutoScrollOnFocus(JComponent comp) {
         comp.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
@@ -645,6 +677,7 @@ public class DataGuruPanel extends JPanel {
         });
     }
 
+    // Menangani proses: ensure field visible.
     private void ensureFieldVisible(JComponent comp) {
         if (formScroll == null || comp == null) return;
         SwingUtilities.invokeLater(() -> {
@@ -656,6 +689,7 @@ public class DataGuruPanel extends JPanel {
         });
     }
 
+    // Menangani proses: scroll form to top and focus first.
     private void scrollFormToTopAndFocusFirst() {
         if (formScroll != null) {
             SwingUtilities.invokeLater(() -> formScroll.getVerticalScrollBar().setValue(0));
@@ -665,6 +699,7 @@ public class DataGuruPanel extends JPanel {
         }
     }
 
+    // Menangani proses: style check box.
     private void styleCheckBox(JCheckBox cb) {
         cb.setOpaque(false);
         cb.setFont(Theme.FONT_BODY);
@@ -672,6 +707,7 @@ public class DataGuruPanel extends JPanel {
         installAutoScrollOnFocus(cb);
     }
 
+    // Menangani proses: make btn.
     private JButton makeBtn(String text, Color bg, ActionListener al) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -695,10 +731,12 @@ public class DataGuruPanel extends JPanel {
         return b;
     }
 
+    // Menangani proses: show error.
     private void showError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Peringatan", JOptionPane.WARNING_MESSAGE);
     }
 
+    // Menangani proses: show success.
     private void showSuccess(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Berhasil", JOptionPane.INFORMATION_MESSAGE);
     }

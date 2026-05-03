@@ -34,6 +34,7 @@ public class DataPenggunaPanel extends JPanel {
         "NIP", "Username", "Password", "Nama", "Role", "Kelas"
     };
 
+    // Menjalankan inisialisasi objek DataPenggunaPanel.
     public DataPenggunaPanel() {
         setLayout(new BorderLayout(16, 0));
         setOpaque(false);
@@ -43,6 +44,7 @@ public class DataPenggunaPanel extends JPanel {
         loadTable();
     }
 
+    // Menangani proses: build table side.
     private JPanel buildTableSide() {
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setOpaque(false);
@@ -129,6 +131,7 @@ public class DataPenggunaPanel extends JPanel {
         return p;
     }
 
+    // Menangani proses: build form side.
     private JPanel buildFormSide() {
         RoundedPanel form = Theme.makeCard(16);
         form.setLayout(new BorderLayout(0, 0));
@@ -225,6 +228,7 @@ public class DataPenggunaPanel extends JPanel {
         return form;
     }
 
+    // Menangani proses: mulai tambah.
     private void mulaiTambah() {
         editingUsername = null;
         clearFields();
@@ -234,6 +238,7 @@ public class DataPenggunaPanel extends JPanel {
         table.clearSelection();
     }
 
+    // Menangani proses: pilih pengguna.
     private void pilihPengguna(Guru g) {
         editingUsername = g.getUsername();
         setTextValue(tfNip, g.getNip(), "Nomor induk pegawai (NIP)");
@@ -248,6 +253,7 @@ public class DataPenggunaPanel extends JPanel {
         scrollFormToTopAndFocusFirst();
     }
 
+    // Menyimpan data form ke database.
     private void simpan() {
         String nip = getFieldText(tfNip, "Nomor induk pegawai (NIP)");
         String username = getFieldText(tfUsername, "Username login");
@@ -303,6 +309,7 @@ public class DataPenggunaPanel extends JPanel {
         clearForm();
     }
 
+    // Menghapus data yang sedang dipilih.
     private void hapus() {
         if (editingUsername == null) return;
 
@@ -326,6 +333,7 @@ public class DataPenggunaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: clear form.
     private void clearForm() {
         editingUsername = null;
         clearFields();
@@ -334,6 +342,7 @@ public class DataPenggunaPanel extends JPanel {
         table.clearSelection();
     }
 
+    // Menangani proses: clear fields.
     private void clearFields() {
         setPlaceholder(tfNip, "Nomor induk pegawai (NIP)");
         setPlaceholder(tfUsername, "Username login");
@@ -344,6 +353,7 @@ public class DataPenggunaPanel extends JPanel {
         syncKelasByRole();
     }
 
+    // Memuat data terbaru ke tabel.
     public void loadTable() {
         rebuildKelasChecks(getKelasSelectedCsv());
         List<Guru> all = ds.getDaftarGuru();
@@ -367,6 +377,7 @@ public class DataPenggunaPanel extends JPanel {
         renderWrappedStatus();
     }
 
+    // Menangani proses: render wrapped status.
     private void renderWrappedStatus() {
         if (lblStatus == null) return;
         if (statusSummaryText == null || statusSummaryText.isEmpty()) {
@@ -403,11 +414,13 @@ public class DataPenggunaPanel extends JPanel {
         lblStatus.setText(html.toString());
     }
 
+    // Menangani proses: get selected filter role.
     private String getSelectedFilterRole() {
         Object selected = cbFilterRole.getSelectedItem();
         return selected == null ? "Semua" : selected.toString();
     }
 
+    // Menangani proses: sync kelas by role.
     private void syncKelasByRole() {
         String role = (String) cbRole.getSelectedItem();
         boolean admin = "Administrator".equals(role);
@@ -417,12 +430,14 @@ public class DataPenggunaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: normalize kelas.
     private String normalizeKelas(String kelas) {
         if (kelas == null || kelas.trim().isEmpty()) return "Semua";
         if ("A,B".equals(kelas) || "B,A".equals(kelas)) return "A,B";
         return kelas;
     }
 
+    // Menangani proses: rebuild kelas checks.
     private void rebuildKelasChecks(String selectedCsv) {
         if (kelasOptionsPanel == null) return;
         kelasChecks.clear();
@@ -442,6 +457,7 @@ public class DataPenggunaPanel extends JPanel {
         kelasOptionsPanel.repaint();
     }
 
+    // Menangani proses: contains kelas.
     private boolean containsKelas(String csv, String kelas) {
         if (csv == null || csv.trim().isEmpty()) return false;
         for (String p : csv.split(",")) {
@@ -450,6 +466,7 @@ public class DataPenggunaPanel extends JPanel {
         return false;
     }
 
+    // Menangani proses: get kelas selected csv.
     private String getKelasSelectedCsv() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, JCheckBox> e : kelasChecks.entrySet()) {
@@ -460,6 +477,7 @@ public class DataPenggunaPanel extends JPanel {
         return sb.toString();
     }
 
+    // Menangani proses: f label.
     private JLabel fLabel(String t) {
         JLabel l = new JLabel(t);
         l.setFont(Theme.FONT_HEADER);
@@ -467,6 +485,7 @@ public class DataPenggunaPanel extends JPanel {
         return l;
     }
 
+    // Menangani proses: f field.
     private JTextField fField(String placeholder) {
         JTextField tf = new JTextField();
         tf.setFont(Theme.FONT_BODY);
@@ -477,6 +496,7 @@ public class DataPenggunaPanel extends JPanel {
                 new EmptyBorder(4, 8, 4, 8)));
         setPlaceholder(tf, placeholder);
         tf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 ensureFieldVisible(tf);
                 if (tf.getText().equals(placeholder)) {
@@ -484,6 +504,7 @@ public class DataPenggunaPanel extends JPanel {
                     tf.setForeground(Theme.TEXT_DARK);
                 }
             }
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (tf.getText().isEmpty()) setPlaceholder(tf, placeholder);
             }
@@ -491,6 +512,7 @@ public class DataPenggunaPanel extends JPanel {
         return tf;
     }
 
+    // Menangani proses: f password.
     private JPasswordField fPassword(String placeholder) {
         JPasswordField pf = new JPasswordField();
         pf.setFont(Theme.FONT_BODY);
@@ -501,6 +523,7 @@ public class DataPenggunaPanel extends JPanel {
                 new EmptyBorder(4, 8, 4, 8)));
         setPasswordPlaceholder(pf, placeholder);
         pf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 ensureFieldVisible(pf);
                 if (pf.getForeground().equals(Theme.TEXT_GRAY)) {
@@ -509,6 +532,7 @@ public class DataPenggunaPanel extends JPanel {
                     pf.setForeground(Theme.TEXT_DARK);
                 }
             }
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (pf.getPassword().length == 0) setPasswordPlaceholder(pf, placeholder);
             }
@@ -516,22 +540,26 @@ public class DataPenggunaPanel extends JPanel {
         return pf;
     }
 
+    // Menangani proses: set placeholder.
     private void setPlaceholder(JTextField tf, String ph) {
         tf.setText(ph);
         tf.setForeground(Theme.TEXT_GRAY);
     }
 
+    // Menangani proses: set password placeholder.
     private void setPasswordPlaceholder(JPasswordField pf, String ph) {
         pf.setEchoChar((char) 0);
         pf.setText(ph);
         pf.setForeground(Theme.TEXT_GRAY);
     }
 
+    // Menangani proses: get field text.
     private String getFieldText(JTextField tf, String placeholder) {
         String t = tf.getText().trim();
         return t.equals(placeholder) ? "" : t;
     }
 
+    // Menangani proses: set text value.
     private void setTextValue(JTextField tf, String value, String placeholder) {
         if (value == null || value.isEmpty()) {
             setPlaceholder(tf, placeholder);
@@ -541,6 +569,7 @@ public class DataPenggunaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: install auto scroll on focus.
     private void installAutoScrollOnFocus(JComponent comp) {
         comp.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
@@ -549,6 +578,7 @@ public class DataPenggunaPanel extends JPanel {
         });
     }
 
+    // Menangani proses: ensure field visible.
     private void ensureFieldVisible(JComponent comp) {
         if (formScroll == null || comp == null) return;
         SwingUtilities.invokeLater(() -> {
@@ -562,6 +592,7 @@ public class DataPenggunaPanel extends JPanel {
         });
     }
 
+    // Menangani proses: scroll form to top and focus first.
     private void scrollFormToTopAndFocusFirst() {
         if (formScroll != null) {
             SwingUtilities.invokeLater(() -> formScroll.getVerticalScrollBar().setValue(0));
@@ -571,6 +602,7 @@ public class DataPenggunaPanel extends JPanel {
         }
     }
 
+    // Menangani proses: make btn.
     private JButton makeBtn(String text, Color bg, ActionListener al) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -594,10 +626,12 @@ public class DataPenggunaPanel extends JPanel {
         return b;
     }
 
+    // Menangani proses: show error.
     private void showError(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Peringatan", JOptionPane.WARNING_MESSAGE);
     }
 
+    // Menangani proses: show success.
     private void showSuccess(String msg) {
         JOptionPane.showMessageDialog(this, msg, "Berhasil", JOptionPane.INFORMATION_MESSAGE);
     }

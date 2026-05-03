@@ -22,6 +22,7 @@ public class RegisterFrame extends JDialog {
     private JLabel         lblError;
     private JFrame         parent;
 
+    // Menjalankan inisialisasi objek RegisterFrame.
     public RegisterFrame(JFrame parent) {
         super(parent, "Daftar Akun Guru Baru", true);
         this.parent = parent;
@@ -31,6 +32,7 @@ public class RegisterFrame extends JDialog {
         setContentPane(buildContent());
     }
 
+    // Menyusun komponen isi halaman.
     private JPanel buildContent() {
         JPanel bg = new JPanel(new GridBagLayout()) {
             @Override protected void paintComponent(Graphics g) {
@@ -111,6 +113,7 @@ public class RegisterFrame extends JDialog {
         return bg;
     }
 
+    // Memproses pendaftaran akun baru.
     private void doRegister() {
         String nama     = tfNama.getText().trim();
         String username = tfUsername.getText().trim();
@@ -160,6 +163,7 @@ public class RegisterFrame extends JDialog {
         return l;
     }
 
+    // Menangani proses: input field.
     private JTextField inputField(String placeholder) {
         JTextField tf = new JTextField();
         tf.setFont(Theme.FONT_BODY);
@@ -170,9 +174,11 @@ public class RegisterFrame extends JDialog {
         tf.setForeground(Theme.TEXT_GRAY);
         tf.setText(placeholder);
         tf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 if (tf.getText().equals(placeholder)) { tf.setText(""); tf.setForeground(Theme.TEXT_DARK); }
             }
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (tf.getText().isEmpty()) { tf.setText(placeholder); tf.setForeground(Theme.TEXT_GRAY); }
             }
@@ -180,6 +186,7 @@ public class RegisterFrame extends JDialog {
         return tf;
     }
 
+    // Menangani proses: pass field.
     private JPasswordField passField(String placeholder) {
         JPasswordField pf = new JPasswordField();
         pf.setFont(Theme.FONT_BODY);
@@ -191,11 +198,13 @@ public class RegisterFrame extends JDialog {
         pf.setForeground(Theme.TEXT_GRAY);
         pf.setText(placeholder);
         pf.addFocusListener(new FocusAdapter() {
+            // Menangani proses: focus gained.
             public void focusGained(FocusEvent e) {
                 if (String.valueOf(pf.getPassword()).equals(placeholder)) {
                     pf.setText(""); pf.setEchoChar('●'); pf.setForeground(Theme.TEXT_DARK);
                 }
             }
+            // Menangani proses: focus lost.
             public void focusLost(FocusEvent e) {
                 if (pf.getPassword().length == 0) {
                     pf.setEchoChar((char)0); pf.setText(placeholder); pf.setForeground(Theme.TEXT_GRAY);
@@ -205,6 +214,7 @@ public class RegisterFrame extends JDialog {
         return pf;
     }
 
+    // Menangani proses: make round btn.
     private JButton makeRoundBtn(String text, Color bg) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -226,6 +236,7 @@ public class RegisterFrame extends JDialog {
         return b;
     }
 
+    // Menangani proses: wrap full.
     private JPanel wrapFull(JComponent c) {
         JPanel p = new JPanel(new BorderLayout());
         p.setOpaque(false);

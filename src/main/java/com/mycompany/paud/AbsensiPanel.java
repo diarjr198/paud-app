@@ -48,6 +48,7 @@ public class AbsensiPanel extends JPanel {
     private boolean ignoreSelectAllEvent = false;
     private LocalDate selectedDate = LocalDate.now();
 
+    // Menjalankan inisialisasi objek AbsensiPanel.
     public AbsensiPanel() {
         setLayout(new BorderLayout(0, 0));
         setOpaque(false);
@@ -63,6 +64,7 @@ public class AbsensiPanel extends JPanel {
         add(sp, BorderLayout.CENTER);
     }
 
+    // Menyusun baris kontrol/filter di bagian atas.
     private JPanel buildTopBar() {
         JPanel bar = new JPanel(new BorderLayout());
         bar.setOpaque(false);
@@ -234,6 +236,7 @@ public class AbsensiPanel extends JPanel {
         return wrap;
     }
 
+    // Menangani proses: toggle select all.
     private void toggleSelectAll() {
         if (cbSelectAll == null || ignoreSelectAllEvent) return;
         if (!cbMultiple.isSelected()) {
@@ -247,6 +250,7 @@ public class AbsensiPanel extends JPanel {
         refreshGrid();
     }
 
+    // Menangani proses: build batch panel.
     private JPanel buildBatchPanel() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         p.setOpaque(false);
@@ -262,6 +266,7 @@ public class AbsensiPanel extends JPanel {
         return p;
     }
 
+    // Menangani proses: batch btn.
     private JButton batchBtn(String text, Color bg, String status) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -292,6 +297,7 @@ public class AbsensiPanel extends JPanel {
         return b;
     }
 
+    // Menangani proses: apply batch status.
     private void applyBatchStatus(String status) {
         if (selectedIds.isEmpty()) return;
         for (Integer id : selectedIds) {
@@ -303,6 +309,7 @@ public class AbsensiPanel extends JPanel {
         refreshGrid();
     }
 
+    // Menangani proses: update batch panel.
     private void updateBatchPanel() {
         if (batchPanel == null || lblSelected == null || cbMultiple == null) return;
         boolean multiOn = cbMultiple.isSelected();
@@ -320,6 +327,7 @@ public class AbsensiPanel extends JPanel {
         }
     }
 
+    // Menangani proses: set select all checked.
     private void setSelectAllChecked(boolean checked) {
         if (cbSelectAll == null) return;
         ignoreSelectAllEvent = true;
@@ -327,6 +335,7 @@ public class AbsensiPanel extends JPanel {
         ignoreSelectAllEvent = false;
     }
 
+    // Menangani proses: get visible siswa ids.
     private Set<Integer> getVisibleSiswaIds() {
         Set<Integer> ids = new LinkedHashSet<>();
         String kelasFilter = getSelectedKelasFilter();
@@ -337,6 +346,7 @@ public class AbsensiPanel extends JPanel {
         return ids;
     }
 
+    // Menangani proses: update submit button.
     private void updateSubmitButton() {
         if (btnSubmitAbsensi == null) return;
         boolean changed = hasDraftChanges();
@@ -344,6 +354,7 @@ public class AbsensiPanel extends JPanel {
         btnSubmitAbsensi.setEnabled(changed);
     }
 
+    // Menangani proses: has draft changes.
     private boolean hasDraftChanges() {
         if (statusDraft.size() != statusSaved.size()) return true;
         for (Map.Entry<Integer, String> e : statusDraft.entrySet()) {
@@ -353,6 +364,7 @@ public class AbsensiPanel extends JPanel {
         return false;
     }
 
+    // Menyimpan perubahan absensi yang sudah diedit.
     private void submitAbsensi() {
         if (!hasDraftChanges()) return;
 
@@ -384,6 +396,7 @@ public class AbsensiPanel extends JPanel {
             JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Menghapus absensi pada tanggal dan kelas terpilih.
     private void resetAbsensiTanggalKelas() {
         String kelas = getSelectedKelasFilter();
         if (kelas == null || kelas.isEmpty()) {
@@ -406,6 +419,7 @@ public class AbsensiPanel extends JPanel {
             "Reset Absensi", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Menangani proses: on tanggal changed.
     private void onTanggalChanged() {
         if (spTanggal == null) return;
         java.util.Date d = (java.util.Date) spTanggal.getValue();
@@ -418,6 +432,7 @@ public class AbsensiPanel extends JPanel {
         refreshGrid();
     }
 
+    // Menangani proses: apply tanggal input.
     private void applyTanggalInput() {
         if (spTanggal == null) return;
         try {
@@ -430,6 +445,7 @@ public class AbsensiPanel extends JPanel {
         onTanggalChanged();
     }
 
+    // Mengembalikan tanggal ke hari ini.
     public void resetToToday() {
         selectedIds.clear();
         statusDraft.clear();
@@ -452,6 +468,7 @@ public class AbsensiPanel extends JPanel {
         }
     }
 
+    // Menyusun area daftar data berbentuk grid.
     private JPanel buildGrid() {
         gridPanel = new JPanel();
         gridPanel.setOpaque(false);
@@ -459,6 +476,7 @@ public class AbsensiPanel extends JPanel {
         return gridPanel;
     }
 
+    // Menyegarkan daftar kartu siswa absensi.
     public void refreshGrid() {
         if (gridPanel == null) return;
         List<Siswa> all = ds.getDaftarSiswa(selectedDate);
@@ -520,12 +538,14 @@ public class AbsensiPanel extends JPanel {
         updateBelum();
     }
 
+    // Menangani proses: update hari tanggal label.
     private void updateHariTanggalLabel() {
         if (lblHariTanggal == null) return;
         String hari = selectedDate.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("id", "ID"));
         lblHariTanggal.setText("(" + hari + ")");
     }
 
+    // Menangani proses: sync draft status.
     private void syncDraftStatus(List<Siswa> all) {
         Set<Integer> activeIds = new LinkedHashSet<>();
         for (Siswa s : all) {
@@ -540,6 +560,7 @@ public class AbsensiPanel extends JPanel {
         selectedIds.retainAll(activeIds);
     }
 
+    // Menangani proses: normalize status.
     private String normalizeStatus(String status) {
         if (status == null || status.trim().isEmpty() || "-".equals(status)) return "Alpa";
         switch (status) {
@@ -551,6 +572,7 @@ public class AbsensiPanel extends JPanel {
         }
     }
 
+    // Menangani proses: refresh kelas options.
     private void refreshKelasOptions(List<Siswa> all) {
         if (cbFilterKelas == null) return;
         String current = (String) cbFilterKelas.getSelectedItem();
@@ -567,22 +589,26 @@ public class AbsensiPanel extends JPanel {
         ignoreFilterEvent = false;
     }
 
+    // Menangani proses: get selected kelas filter.
     private String getSelectedKelasFilter() {
         if (cbFilterKelas == null || cbFilterKelas.getSelectedItem() == null) return "";
         return cbFilterKelas.getSelectedItem().toString();
     }
 
+    // Menangani proses: update header by filter.
     private void updateHeaderByFilter(String kelasFilter) {
         if (lblGroup == null) return;
         if (kelasFilter == null || kelasFilter.isEmpty()) lblGroup.setText("Absensi Harian");
         else lblGroup.setText("Absensi Harian - Kelas " + kelasFilter);
     }
 
+    // Menangani proses: update belum.
     private void updateBelum() {
         if (lblBelum != null)
             lblBelum.setText(" 🔔 Siswa Belum Diabsen: " + ds.getBelumDiabsen(selectedDate) + " ");
     }
 
+    // Menangani proses: build siswa card.
     private JPanel buildSiswaCard(Siswa s, boolean listMode) {
         RoundedPanel card = Theme.makeCard(14);
         card.setLayout(new BorderLayout(8, 0));
@@ -683,6 +709,7 @@ public class AbsensiPanel extends JPanel {
         return card;
     }
 
+    // Menangani proses: attach select handler.
     private void attachSelectHandler(Component comp, int siswaId) {
         if (comp instanceof JButton) return;
         comp.addMouseListener(new MouseAdapter() {
@@ -701,6 +728,7 @@ public class AbsensiPanel extends JPanel {
         }
     }
 
+    // Menangani proses: highlight card.
     private void highlightCard(RoundedPanel card, String status) {
         Color bg = Theme.CARD_BG;
         switch (status) {
@@ -717,6 +745,7 @@ public class AbsensiPanel extends JPanel {
         card.repaint();
     }
 
+    // Menangani proses: abs btn.
     private JButton absBtn(String text, Color bg, int siswaId, String status, String currentStatus) {
         JButton b = new JButton(text) {
             @Override protected void paintComponent(Graphics g) {
@@ -759,6 +788,7 @@ public class AbsensiPanel extends JPanel {
         return b;
     }
 
+    // Menangani proses: make avatar.
     private JLabel makeAvatar(Siswa s) {
         // Simple colored circle with initial
         JLabel l = new JLabel(s.getNama().substring(0, 1), SwingConstants.CENTER) {
