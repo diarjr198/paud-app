@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
 public class PengaturanPanel extends JPanel {
     private final DataStore ds = DataStore.getInstance();
     private JTextField tfNamaSekolah;
+    private JTextField tfJamMasuk;
+    private JTextField tfJamPulang;
 
     public PengaturanPanel() {
         setLayout(new BorderLayout());
@@ -34,21 +36,21 @@ public class PengaturanPanel extends JPanel {
         styleField(tfNamaSekolah);
         card.add(settingRow("Nama Sekolah:", tfNamaSekolah));
         card.add(Box.createVerticalStrut(10));
-        JButton btnSimpan = makeBtn("Simpan Nama Sekolah", Theme.BLUE_BTN, e -> simpanNamaSekolah());
+        tfJamMasuk = new JTextField(ds.getJamMasuk());
+        styleField(tfJamMasuk);
+        card.add(settingRow("Jam Masuk:", tfJamMasuk));
+        card.add(Box.createVerticalStrut(14));
+
+        tfJamPulang = new JTextField(ds.getJamPulang());
+        styleField(tfJamPulang);
+        card.add(settingRow("Jam Pulang:", tfJamPulang));
+        card.add(Box.createVerticalStrut(10));
+
+        JButton btnSimpan = makeBtn("Simpan Pengaturan", Theme.BLUE_BTN, e -> simpanPengaturan());
         btnSimpan.setPreferredSize(new Dimension(200, 34));
         btnSimpan.setMaximumSize(new Dimension(220, 34));
         btnSimpan.setAlignmentX(LEFT_ALIGNMENT);
         card.add(btnSimpan);
-        card.add(Box.createVerticalStrut(14));
-        card.add(settingRow("Tahun Ajaran:",   readOnlyField("2023/2024")));
-        card.add(Box.createVerticalStrut(14));
-        card.add(settingRow("Wali Kelas A:",   readOnlyField("Bu Siti")));
-        card.add(Box.createVerticalStrut(14));
-        card.add(settingRow("Wali Kelas B:",   readOnlyField("Bu Dewi")));
-        card.add(Box.createVerticalStrut(14));
-        card.add(settingRow("Jam Masuk:",      readOnlyField("07:30 WIB")));
-        card.add(Box.createVerticalStrut(14));
-        card.add(settingRow("Jam Pulang:",     readOnlyField("10:30 WIB")));
 
         JPanel wrap = new JPanel(new BorderLayout());
         wrap.setOpaque(false);
@@ -69,14 +71,6 @@ public class PengaturanPanel extends JPanel {
         row.add(lbl, BorderLayout.WEST);
         row.add(field,  BorderLayout.CENTER);
         return row;
-    }
-
-    private JTextField readOnlyField(String value) {
-        JTextField tf = new JTextField(value);
-        styleField(tf);
-        tf.setEditable(false);
-        tf.setBackground(new Color(248, 248, 248));
-        return tf;
     }
 
     private void styleField(JTextField tf) {
@@ -109,19 +103,36 @@ public class PengaturanPanel extends JPanel {
         return b;
     }
 
-    private void simpanNamaSekolah() {
+    private void simpanPengaturan() {
         String nama = tfNamaSekolah == null ? "" : tfNamaSekolah.getText().trim();
+        String jamMasuk = tfJamMasuk == null ? "" : tfJamMasuk.getText().trim();
+        String jamPulang = tfJamPulang == null ? "" : tfJamPulang.getText().trim();
         if (nama.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nama sekolah tidak boleh kosong.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        boolean ok = ds.setNamaSekolah(nama);
-        if (!ok) {
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan nama sekolah.", "Error", JOptionPane.ERROR_MESSAGE);
+        if (!jamMasuk.matches("\\d{2}:\\d{2}(\\s*WIB)?")) {
+            JOptionPane.showMessageDialog(this, "Format Jam Masuk harus HH:mm atau HH:mm WIB.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        if (!jamPulang.matches("\\d{2}:\\d{2}(\\s*WIB)?")) {
+            JOptionPane.showMessageDialog(this, "Format Jam Pulang harus HH:mm atau HH:mm WIB.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!jamMasuk.toUpperCase().contains("WIB")) jamMasuk = jamMasuk + " WIB";
+        if (!jamPulang.toUpperCase().contains("WIB")) jamPulang = jamPulang + " WIB";
+
+        boolean okNama = ds.setNamaSekolah(nama);
+        boolean okMasuk = ds.setJamMasuk(jamMasuk);
+        boolean okPulang = ds.setJamPulang(jamPulang);
+        if (!okNama || !okMasuk || !okPulang) {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan pengaturan.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        tfJamMasuk.setText(jamMasuk);
+        tfJamPulang.setText(jamPulang);
         Window w = SwingUtilities.getWindowAncestor(this);
         if (w instanceof MainFrame) ((MainFrame) w).refreshSchoolBranding();
-        JOptionPane.showMessageDialog(this, "Nama sekolah berhasil disimpan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Pengaturan berhasil disimpan.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
     }
 }

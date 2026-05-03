@@ -22,7 +22,7 @@ public class DashboardPanel extends JPanel {
         setOpaque(false);
         setBorder(new EmptyBorder(20, 24, 20, 24));
         add(buildRingkasanPanel(), BorderLayout.NORTH);
-        add(buildPengumumanPanel(), BorderLayout.CENTER);
+        add(Box.createVerticalGlue(), BorderLayout.CENTER);
     }
 
     private JPanel buildRingkasanPanel() {
@@ -78,48 +78,6 @@ public class DashboardPanel extends JPanel {
 
         card.add(lbl, BorderLayout.NORTH);
         card.add(chartWrap, BorderLayout.CENTER);
-        return card;
-    }
-
-    private JPanel buildPengumumanPanel() {
-        JPanel outer = new JPanel(new BorderLayout(0, 10));
-        outer.setOpaque(false);
-
-        JLabel title = new JLabel("PENGUMUMAN & KEGIATAN");
-        title.setFont(Theme.FONT_HEADER);
-        title.setForeground(Theme.TEXT_DARK);
-        outer.add(title, BorderLayout.NORTH);
-
-        JPanel items = new JPanel(new GridLayout(1, 2, 12, 0));
-        items.setOpaque(false);
-
-        items.add(buildAnnouncementCard("🏫", "Outing Class Besok", "15/20 anak", new Color(220, 240, 255)));
-        items.add(buildAnnouncementCard("🎂", "Ulang Tahun Ani", "17 Mo anak", new Color(255, 235, 210)));
-
-        outer.add(items, BorderLayout.CENTER);
-        return outer;
-    }
-
-    private JPanel buildAnnouncementCard(String icon, String title, String sub, Color bg) {
-        RoundedPanel card = new RoundedPanel(14, bg);
-        card.setLayout(new FlowLayout(FlowLayout.LEFT, 14, 14));
-
-        JLabel iconLbl = new JLabel(icon);
-        iconLbl.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 28));
-
-        JPanel text = new JPanel();
-        text.setOpaque(false);
-        text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
-        JLabel t = new JLabel(title);
-        t.setFont(Theme.FONT_HEADER);
-        JLabel s = new JLabel(sub);
-        s.setFont(Theme.FONT_BODY);
-        s.setForeground(Theme.TEXT_GRAY);
-        text.add(t);
-        text.add(s);
-
-        card.add(iconLbl);
-        card.add(text);
         return card;
     }
 

@@ -67,6 +67,26 @@ public class DataStore {
         return db.setSetting("nama_sekolah", v);
     }
 
+    public String getJamMasuk() {
+        return db.getSetting("jam_masuk", "07:30 WIB");
+    }
+
+    public String getJamPulang() {
+        return db.getSetting("jam_pulang", "10:30 WIB");
+    }
+
+    public boolean setJamMasuk(String jam) {
+        String v = (jam == null) ? "" : jam.trim();
+        if (v.isEmpty()) return false;
+        return db.setSetting("jam_masuk", v);
+    }
+
+    public boolean setJamPulang(String jam) {
+        String v = (jam == null) ? "" : jam.trim();
+        if (v.isEmpty()) return false;
+        return db.setSetting("jam_pulang", v);
+    }
+
     // ===== KELAS =====
     public List<Kelas> getDaftarKelas() { return db.getAllKelas(); }
     public Kelas getKelasById(int id) { return db.getKelasById(id); }
